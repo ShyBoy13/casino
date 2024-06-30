@@ -1,0 +1,150 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+}
+
+header {
+  font-family: 'Times New Roman', serif;
+  color: #FFF;
+  background-color: #000;
+  font-size: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  height: 10%;
+}
+
+header > span {
+  transform: skew(-20deg, 0deg);
+  letter-spacing: 0.2em; 
+}
+
+main {
+  background-color: #f0f0f0;
+  height: 90%;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+}
+
+main  {
+  width: 100%;
+  font-family: 'Times New Roman', serif;
+  font-family: Arial;
+}
+
+#agregar-cliente {
+  display: flex;
+  padding-bottom: 1rem;
+  align-items: center;
+}
+
+#nombre-etiqueta {
+  background-color: #000;
+  color: #fff;
+  font-size: 1.2em;
+  padding: 0.2em 1em;
+  height: 100%;
+}
+
+#agregar-cliente-btn {
+  border: none;
+  background-color: #000;
+  color: #fff;
+  font-size: 1.2rem;
+  padding: 0.2em 1em;
+  height: 100%;
+}
+
+#agregar-cliente-btn:hover {
+  background-color: #222;
+}
+
+#agregar-cliente-btn:active {
+  background-color: #444;
+}
+
+#cliente-nuevo-nombre {
+  outline: none;
+  padding: 0.5em;
+  width: 100%;
+}
+
+#clientes {
+} 
+
+.cliente {
+  font-size: 1.5rem;
+  border: 0.4rem outset #d0d0d0;
+  background-color: #fff;
+  display: flex;
+}
+
+.nombre-cliente {
+  padding: 0.5rem;
+  width: 50%;
+  background-color: #000;
+  color: #fff;
+  text-align: center;
+  font-family: 'Times New Roman', serif;
+  height: 100%;
+}
+
+.cuenta-cliente {
+  display: flex;
+  width: 50%;
+  justify-content: center;
+  align-items: center;
+}
+
+.cantidad-cuenta {
+  width: 80%;
+  text-align: center;
+  font-family: Arial;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+}
+
+.cantidad-operacion {
+  font-family: Arial;
+  letter-spacing: 0.1em;
+  font-size: 0.4em;
+  width: 30%;
+  height: 80%;
+  text-align: center;
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+}
+
+.sumar-cuenta, .restar-cuenta, .reiniciar-cuenta {
+  width: 10%;
+  background-color: #ddd;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  user-select: none;
+}
+
+.sumar-cuenta:hover, .restar-cuenta:hover, .reiniciar-cuenta:hover {
+  background-color: #ccc;
+}
+
+.sumar-cuenta:active, .restar-cuenta:active, .reiniciar-cuenta:hover {
+  background-color: #bbb;
+}
+
+.restar-cuenta {
+  border-left: 1px solid #000;
+}
+
+.reiniciar-cuenta {
+  border-left: 1px solid #000;
+}
