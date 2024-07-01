@@ -46,14 +46,6 @@ main  {
   align-items: center;
 }
 
-#nombre-etiqueta {
-  background-color: #000;
-  color: #fff;
-  font-size: 1.2em;
-  padding: 0.2em 1em;
-  height: 100%;
-}
-
 #agregar-cliente-btn {
   border: none;
   background-color: #000;
@@ -104,7 +96,8 @@ main  {
 
 .nombre-cliente {
   padding: 0.5rem;
-  width: 50%;
+  width: 40%;
+  font-size: 1em;
   background-color: #000;
   color: #fff;
   text-align: center;
@@ -114,7 +107,7 @@ main  {
 
 .cuenta-cliente {
   display: flex;
-  width: 50%;
+  width: 60%;
   justify-content: center;
   align-items: center;
 }
@@ -123,6 +116,7 @@ main  {
   width: 80%;
   text-align: center;
   font-family: Arial;
+  font-size: 1em;
   font-weight: 600;
   letter-spacing: 0.1em;
 }
@@ -130,16 +124,18 @@ main  {
 .cantidad-operacion {
   font-family: Arial;
   letter-spacing: 0.1em;
-  font-size: 0.4em;
-  width: 30%;
+  font-size: 0.5em;
+  width: 40%;
   height: 80%;
   text-align: center;
+  font-weight: 700;
   -webkit-appearance: none;
   -moz-appearance: textfield;
 }
 
 .sumar-cuenta, .restar-cuenta, .reiniciar-cuenta {
-  width: 10%;
+  width: 20%;
+  max-width: 50px;
   background-color: #ddd;
   height: 100%;
   display: flex;
@@ -162,4 +158,11 @@ main  {
 
 .reiniciar-cuenta {
   border-left: 1px solid #000;
+}
+
+
+@media only screen and (max-width: 700px) {
+  * {
+    font-size: 12px;
+  }
 }

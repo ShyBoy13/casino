@@ -3,17 +3,44 @@ const express = require('express')
 const path = require('path');
 const app = express()
 const port = 8080
-
+const host = '0.0.0.0'
+const os = require('os');
+const admin = {user: 'roman', password: 'C4s1n0R10s13#'}
 
 app.use(express.static('public'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }));
 
+app.use((req, res, next) => {
+  console.log(req.method) 
+  console.log(req.hostname) 
+  console.log(req.ip) 
+  res.set({
+    'Acces-Control-Allow-Origin': 'http://10.0.0.19',
+    'Acces-Control-Allow-Methods': 'PUT, DELETE, POST'
+  })
+  if (req.get('Authorization')   ) {
+    const [username, password] = Buffer.from(req.headers.authorization.split(' ')[1], 'base64').toString('ascii').split(':');
+    console.log(username, password)
+    if (username === admin.user && admin.password === password) {
+      next()
+    } else {
+      res.set('WWW-Authenticate', 'Basic realm="admin", charset="UTF-8"')
+      res.status(401).send()
+    }
+  } else  {
+    res.set('WWW-Authenticate', 'Basic realm="admin", charset="UTF-8"')
+    res.status(401).send()
+  }
+})
+
 app.get('/', function(req, res) {
+  console.log(req.header)
   res.sendFile(path.join(__dirname, 'templates/index.html'));
 });
 
 app.get('/clientes', (req, res) => {
+  console.log('que chingados')
   res.set({'Content-Type': 'application/json'})
   bancodb.sendQuery('SELECT * FROM clientes')
     .then(result => {
@@ -48,7 +75,7 @@ app.delete('/clientes/:id', (req, res) => {
     })
 })
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
+app.listen(port, host, () => {
+  console.log(`Example app listening on ${host}:${port}`)
 })
 

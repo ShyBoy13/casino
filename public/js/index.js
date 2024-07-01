@@ -1,3 +1,5 @@
+"use strict";
+
 const crearElemCliente =  (nombre, cuenta, c_id = undefined) => {
   let cantidadOperacionEstado = false;
 
@@ -32,6 +34,7 @@ const crearElemCliente =  (nombre, cuenta, c_id = undefined) => {
   elemCantidadOperacion.type = 'number'
   elemCantidadOperacion.placeholder = 'Cantidad =< 20'
   elemCantidadOperacion.max = 2000
+  elemCantidadOperacion.autofocus = true
   elemCantidadOperacion.className = 'cantidad-operacion'
 
   const elemReiniciarCuenta = document.createElement('span')
@@ -43,23 +46,29 @@ const crearElemCliente =  (nombre, cuenta, c_id = undefined) => {
       let cantidad = parseFloat(elemCantidadOperacion.value)
       let cantidadValida = !isNaN(cantidad) && (cantidad <= 20)
       if (cantidadOperacionEstado ) {
+        elemCantidadOperacion.focus()
+        elemCantidadOperacion.select()
+
         if (cantidadValida) {
           console.log(cantidad)
           cuentaCantidad.textContent = (parseFloat(cuentaCantidad.textContent) + parseFloat(elemCantidadOperacion.value)).toFixed(3)
-          fetch(`http://localhost:8080/clientes/${c_id}`, {
+          fetch(`${window.location.origin}/clientes/${c_id}`, {
             headers: {
               'Content-Type': 'application/json',
             },
             method: 'PUT',
+            credentiasl: ('Authorization', 'Basic ' + btoa(username + ":" + password)),
             body: JSON.stringify({cuenta: parseFloat(cuentaCantidad.textContent).toFixed(3)}),
           })
           elemCantidadOperacion.value = ''
         }
         elemCantidadOperacion.remove()
         elemRestarCuenta.style.display = 'flex'
+        elemReiniciarCuenta.style.display = 'flex'
         cantidadOperacionEstado = false 
       } else {
         e.target.before(elemCantidadOperacion)
+        elemReiniciarCuenta.style.display = 'none'
         elemRestarCuenta.style.display = 'none'
         cantidadOperacionEstado = true
       }
@@ -67,10 +76,11 @@ const crearElemCliente =  (nombre, cuenta, c_id = undefined) => {
       let cantidad = parseFloat(elemCantidadOperacion.value)
       let cantidadValida = !isNaN(cantidad)
       if (cantidadOperacionEstado ) {
+        elemCantidadOperacion.focus()
         if (cantidadValida) {
           console.log(cantidad)
           cuentaCantidad.textContent = (parseFloat(cuentaCantidad.textContent) - parseInt(elemCantidadOperacion.value)).toFixed(3)
-          fetch(`http://localhost:8080/clientes/${c_id}`, {
+          fetch(`${window.location.origin}/clientes/${c_id}`, {
             headers: {
               'Content-Type': 'application/json',
             },
@@ -82,16 +92,18 @@ const crearElemCliente =  (nombre, cuenta, c_id = undefined) => {
         }
         elemCantidadOperacion.remove()
         elemSumarCuenta.style.display = 'flex'
+        elemReiniciarCuenta.style.display = 'flex'
         cantidadOperacionEstado = false 
       } else {
         e.target.before(elemCantidadOperacion)
         elemSumarCuenta.style.display = 'none'
+        elemReiniciarCuenta.style.display = 'none'
         cantidadOperacionEstado = true
       }
     } else if (e.target.classList.contains('reiniciar-cuenta')) {
       if (window.confirm('Desea Reiniciar la cuenta?')) {
         cuentaCantidad.textContent = (0).toFixed(3)
-        fetch(`http://localhost:8080/clientes/${c_id}`, {
+        fetch(`${window.location.origin}/clientes/${c_id}`, {
             headers: {
               'Content-Type': 'application/json',
             },
@@ -100,7 +112,7 @@ const crearElemCliente =  (nombre, cuenta, c_id = undefined) => {
           })
       }
     } else if (e.target.classList.contains('eliminar-cliente-btn')) {
-      fetch(`http://localhost:8080/clientes/${c_id}`, {
+      fetch(`${window.location.origin}/clientes/${c_id}`, {
         method: 'DELETE',
       })
       elemCliente.remove()
@@ -123,7 +135,7 @@ const crearElemCliente =  (nombre, cuenta, c_id = undefined) => {
 
 
 function main () {
-  fetch('http://localhost:8080/clientes', {
+  fetch(`${window.location.origin}/clientes`, {
     method: 'GET',
   })
     .then(res => res.json())
@@ -135,14 +147,12 @@ function main () {
     })
     .catch(err => console.log(err))
 
-  document.querySelector('#clientes').appendChild(crearElemCliente('Roman R. Rios', 10))
-
   document.querySelector('#agregar-cliente').addEventListener('click', (e) => {
     console.log(e.currentTarget)
     if (e.target.id == 'agregar-cliente-btn') {
       let clienteNombre = document.querySelector('#cliente-nuevo-nombre').value
       if (clienteNombre !== '') {
-        fetch('http://localhost:8080/clientes', { 
+        fetch(`${window.location.origin}/clientes`, { 
           method: 'POST',
           body: JSON.stringify({nombre: clienteNombre}),
           headers: {
