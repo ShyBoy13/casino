@@ -9,21 +9,40 @@ html, body {
   width: 100%;
 }
 
+
+a:link, a:visited {
+  color: #fff;
+}
+
 header {
   font-family: 'Times New Roman', serif;
-  color: #FFF;
   background-color: #000;
-  font-size: 2.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 10px;
+  flex-wrap:  wrap;
   height: 10%;
 }
 
-header > span {
+nav {
+  width: 20%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  height: 100%;
+}
+
+#titulo-elem {
+  width: 80%;
+  height: 100%;
+  color: #FFF;
+  font-size: 2.5rem;
   transform: skew(-20deg, 0deg);
   letter-spacing: 0.2em; 
+  text-align: center;
+  padding-right: 25%;
+
 }
 
 main {
@@ -32,11 +51,7 @@ main {
   display: flex;
   flex-direction: column;
   padding: 1rem;
-}
-
-main  {
   width: 100%;
-  font-family: 'Times New Roman', serif;
   font-family: Arial;
 }
 

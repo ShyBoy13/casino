@@ -1,0 +1,115 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  background-color: #f0f0f0;
+}
+
+a:link, a:visited {
+  color: #fff;
+}
+
+input[type="number"] {
+  font-size: 1.2rem;
+  outline: none;
+  padding: 0.5rem;
+}
+
+input[type="button"] {
+  border: none;
+  background-color: #000;
+  color: #fff;
+  padding: calc(0.5rem + 2px);
+  font-size: 1.2rem;
+}
+header {
+  font-family: 'Times New Roman', serif;
+  background-color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 10px;
+  flex-wrap:  wrap;
+  height: 10%;
+}
+
+nav {
+  width: 20%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  height: 100%;
+}
+
+#titulo-elem {
+  width: 80%;
+  height: 100%;
+  color: #FFF;
+  font-size: 2.5rem;
+  transform: skew(-20deg, 0deg);
+  letter-spacing: 0.2em; 
+  text-align: center;
+  padding-right: 25%;
+
+}
+
+main {
+  height: 90%;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  width: 100%;
+  font-family: Arial;
+  align-items: center;
+}
+
+#administrar-fondo-cont {
+  width: 80%;
+  background-color: #fff;
+  font-size: 1.5rem;
+  border: 0.4rem outset #d0d0d0;
+  display: flex;
+  padding: 0.5rem;
+}
+
+#administrar-fondo-elem {
+  width: 100%;
+  display: flex;
+}
+
+#monto-input {
+  width: 90%;
+}
+
+#monto-sumar-btn {
+  width: 10%;
+}
+
+#monto-restar-btn {
+  border-left: 1px solid #fff;
+  width: 10%;
+}
+
+#fondo-elem {
+  width: 80%;
+  background-color: #fff;
+  font-size: 1.5rem;
+  border: 0.4rem outset #d0d0d0;
+  display: flex;
+  padding: 0.5rem;
+  justify-content: center;
+
+}
+
+#fondo-texto {
+
+}

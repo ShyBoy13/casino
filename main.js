@@ -35,8 +35,17 @@ app.use((req, res, next) => {
 })
 
 app.get('/', function(req, res) {
-  console.log(req.header)
   res.sendFile(path.join(__dirname, 'templates/index.html'));
+});
+
+app.get('/fondos', function(req, res) {
+  res.sendFile(path.join(__dirname, 'templates/casino-fondos.html'));
+});
+
+
+app.get('/calculadora', function(req, res) {
+  console.log(req.header)
+  res.sendFile(path.join(__dirname, 'templates/calculadora-fichas.html'));
 });
 
 app.get('/clientes', (req, res) => {

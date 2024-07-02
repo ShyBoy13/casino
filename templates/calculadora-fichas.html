@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/calculadora-fichas.css">
+  <script defer src="js/calculadora-fichas.js"> </script>
+  <title>Calculadora de fichas</title>
+</head>
+<body>
+  <header>
+     <a href="/">Inicio</a>
+    <span>Calcular fichas</span>
+  </header>
+  <main id="calculadora-cont">
+    <section id="calculadora-elem">
+      <article id="calculadora-entrada">
+       <input id="cantidad-dinero" placeholder="Cantidad en $MXN" type="number" name="">
+       <input id="calcular-btn" type="button" value="Calcular">
+      </article>
+      <article id="cantidad-fichas-cont">
+        <p class="ficha" id="valor-100">Fichas de <span>❂100⤜</span><span class="calculo-fichas"></span></p>
+        <p class="ficha" id="valor-50">Fichas de <span>❂50⤜</span><span class="calculo-fichas"></span></p>
+        <p class="ficha" id="valor-30">Fichas de <span>❂30⤜</span><span class="calculo-fichas"></span></p>
+        <p class="ficha" id="valor-20">Fichas de <span>❂20⤜</span><span class="calculo-fichas"></span></p>
+        <p class="ficha" id="valor-10">Fichas de <span>❂10⤜</span><span class="calculo-fichas"></span></p>
+      </article>
+      <article id="datos-calculados">
+        <div id="total-fichas"></div>
+        <div id="error-calculo"></div>
+        <div id="total-centavos"></div>
+      </article>
+    </section>
+  </main>
+</body>
+</html>

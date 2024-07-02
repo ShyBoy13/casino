@@ -48,7 +48,7 @@ const crearElemCliente =  (nombre, cuenta, c_id = undefined) => {
       if (cantidadOperacionEstado ) {
         elemCantidadOperacion.focus()
         elemCantidadOperacion.select()
-
+9
         if (cantidadValida) {
           console.log(cantidad)
           cuentaCantidad.textContent = (parseFloat(cuentaCantidad.textContent) + parseFloat(elemCantidadOperacion.value)).toFixed(3)
@@ -57,7 +57,6 @@ const crearElemCliente =  (nombre, cuenta, c_id = undefined) => {
               'Content-Type': 'application/json',
             },
             method: 'PUT',
-            credentiasl: ('Authorization', 'Basic ' + btoa(username + ":" + password)),
             body: JSON.stringify({cuenta: parseFloat(cuentaCantidad.textContent).toFixed(3)}),
           })
           elemCantidadOperacion.value = ''

@@ -1,0 +1,123 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  background-color: #f0f0f0;
+}
+
+a:link, a:visited {
+  color: #fff;
+}
+
+header {
+  font-family: 'Times New Roman', serif;
+  background-color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 10px;
+  flex-wrap:  wrap;
+  height: 10%;
+}
+
+header > a {
+  width: 10%;
+}
+
+header > span {
+  width: 90%;
+  height: 100%;
+  color: #FFF;
+  font-size: 2.5em;
+  transform: skew(-20deg, 0deg);
+  letter-spacing: 0.2em; 
+  text-align: center;
+  padding-right: 25%;
+}
+
+main {
+  background-color: #f0f0f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+}
+
+#calculadora-elem {
+  width: 90%;
+  border: 0.3rem outset #d0d0d0;
+  background-color: #fff;
+  padding: 1.5rem;
+}
+
+#calculadora-entrada {
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+input[type="number"] {
+  font-size: 1.2rem;
+  outline: none;
+  padding: 0.5rem;
+  width: 80%;
+}
+
+input[type="button"] {
+  border: none;
+  background-color: #000;
+  color: #fff;
+  padding: calc(0.5rem + 2px);
+  font-size: 1.2rem;
+  width: 20%;
+}
+
+.ficha {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0.75rem 0;
+}
+
+.ficha span {
+  letter-spacing: 0.25rem;
+}
+
+#valor-100 span, #valor-100 b {
+  color: #000;
+}
+#valor-50 span, #valor-50 b {
+  color: #900;
+}
+#valor-30 span, #valor-30 b {
+  color:#009;
+}
+#valor-20 span, #valor-20 b {
+  color: #272;
+}
+#valor-10 span, #valor-10 b {
+  color: #606060;
+  margin-bottom: none;
+}
+
+#datos-calculados {
+  font-size: 1.25rem;
+}
+
+
+@media only screen and (max-width: 700px) {
+  * {
+    font-size: 12px;
+  }
+  header > span {
+    font-size: 2em
+  }
+}
