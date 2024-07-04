@@ -30,6 +30,7 @@ input[type="button"] {
   padding: calc(0.5rem + 2px);
   font-size: 1.2rem;
 }
+
 header {
   font-family: 'Times New Roman', serif;
   background-color: #000;

@@ -9,8 +9,13 @@
 </head>
 <body>
   <header>
-     <a href="/">Inicio</a>
-    <span>Calcular fichas</span>
+    <nav>
+      <a href="/">Inicio</a>
+      <a href="/calculadora">Calculadora</a>
+    </nav>
+    <section id="titulo-elem">
+      <span id="titulo-texto">Calculadora</span>
+    </section>
   </header>
   <main id="calculadora-cont">
     <section id="calculadora-elem">
@@ -19,11 +24,26 @@
        <input id="calcular-btn" type="button" value="Calcular">
       </article>
       <article id="cantidad-fichas-cont">
-        <p class="ficha" id="valor-100">Fichas de <span>❂100⤜</span><span class="calculo-fichas"></span></p>
-        <p class="ficha" id="valor-50">Fichas de <span>❂50⤜</span><span class="calculo-fichas"></span></p>
-        <p class="ficha" id="valor-30">Fichas de <span>❂30⤜</span><span class="calculo-fichas"></span></p>
-        <p class="ficha" id="valor-20">Fichas de <span>❂20⤜</span><span class="calculo-fichas"></span></p>
-        <p class="ficha" id="valor-10">Fichas de <span>❂10⤜</span><span class="calculo-fichas"></span></p>
+        <div class="ficha" id="valor-100">
+          <input id="porcentaje-100" type="number" max="1" min="0" step="0.005" name="" value="0.2">
+          <p>Fichas de <span class="ficha-valor">❂100⤜</span><span class="calculo-fichas"></span></p>
+        </div>
+        <div class="ficha" id="valor-50">
+          <input id="porcentaje-50" type="number" max="1" min="0" step="0.005" name="" value="0.2">
+          <p>Fichas de <span class="ficha-valor">❂50⤜</span><span class="calculo-fichas"></span></p>
+        </div>
+        <div class="ficha" id="valor-30">
+          <input id="porcentaje-30" type="number" max="1" min="0" step="0.005" name="" value="0.2">
+          <p>Fichas de <span class="ficha-valor">❂30⤜</span><span class="calculo-fichas"></span></p>
+        </div>
+        <div class="ficha" id="valor-20">
+          <input id="porcentaje-20" type="number" max="1" min="0" step="0.005" name="" value="0.2">
+          <p>Fichas de <span class="ficha-valor">❂20⤜</span><span class="calculo-fichas"></span></p>
+        </div>
+        <div class="ficha" id="valor-10">
+          <input id="porcentaje-10" type="number" max="1" min="0" step="0.005" name="" value="0.2">
+          <p>Fichas de <span class="ficha-valor">❂10⤜</span><span class="calculo-fichas"></span></p>
+        </div>
       </article>
       <article id="datos-calculados">
         <div id="total-fichas"></div>
