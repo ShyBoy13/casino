@@ -33,8 +33,6 @@ const crearElemCliente =  (nombre, cuenta, c_id = undefined) => {
   const elemCantidadOperacion = document.createElement('input')
   elemCantidadOperacion.type = 'number'
   elemCantidadOperacion.placeholder = 'Cantidad =< 20'
-  elemCantidadOperacion.max = 2000
-  elemCantidadOperacion.autofocus = true
   elemCantidadOperacion.className = 'cantidad-operacion'
 
   const elemReiniciarCuenta = document.createElement('span')
@@ -48,16 +46,17 @@ const crearElemCliente =  (nombre, cuenta, c_id = undefined) => {
       if (cantidadOperacionEstado ) {
         elemCantidadOperacion.focus()
         elemCantidadOperacion.select()
-9
+
         if (cantidadValida) {
           console.log(cantidad)
-          cuentaCantidad.textContent = (parseFloat(cuentaCantidad.textContent) + parseFloat(elemCantidadOperacion.value)).toFixed(3)
+          cuentaCantidad.textContent = (parseFloat(cuentaCantidad.textContent) + cantidad).toFixed(3)
+          console.log(cuentaCantidad.textContent)
           fetch(`${window.location.origin}/clientes/${c_id}`, {
             headers: {
               'Content-Type': 'application/json',
             },
             method: 'PUT',
-            body: JSON.stringify({cuenta: parseFloat(cuentaCantidad.textContent).toFixed(3)}),
+            body: JSON.stringify({cuenta: cuentaCantidad.textContent}),
           })
           elemCantidadOperacion.value = ''
         }
@@ -77,14 +76,14 @@ const crearElemCliente =  (nombre, cuenta, c_id = undefined) => {
       if (cantidadOperacionEstado ) {
         elemCantidadOperacion.focus()
         if (cantidadValida) {
-          console.log(cantidad)
-          cuentaCantidad.textContent = (parseFloat(cuentaCantidad.textContent) - parseInt(elemCantidadOperacion.value)).toFixed(3)
+          cuentaCantidad.textContent = (parseFloat(cuentaCantidad.textContent) - cantidad).toFixed(3)
+          console.log(cuentaCantidad)
           fetch(`${window.location.origin}/clientes/${c_id}`, {
             headers: {
               'Content-Type': 'application/json',
             },
             method: 'PUT',
-            body: JSON.stringify({cuenta: parseFloat(cuentaCantidad.textContent).toFixed(3)}),
+            body: JSON.stringify({cuenta: cuentaCantidad.textContent}),
           })
           elemCantidadOperacion.value = ''
 
@@ -141,6 +140,7 @@ function main () {
     .then(json => {
       console.log(json)
       json.map(cliente => {
+        console.log(cliente)
         document.querySelector('#clientes').appendChild(crearElemCliente(cliente.nombre, cliente.cuenta, cliente.cliente_id,))
       })
     })
@@ -157,8 +157,10 @@ function main () {
           headers: {
             'Content-Type': 'application/json',
           },
-        }).then(res => {
-          document.querySelector('#clientes').appendChild(crearElemCliente(clienteNombre, 0.0))
+        }).then(res => res.text())
+          .then(res => {
+            console.log(res)
+            document.querySelector('#clientes').appendChild(crearElemCliente(clienteNombre, 0.0, res))
         }).catch(err => console.log(err))
       }
     }

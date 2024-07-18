@@ -1,5 +1,5 @@
 const fichas_valores = [100, 50, 30, 20, 10]
-const fichas_porcentajes = [0.240, 0.25, 0.20, 0.20, 0.110]
+const fichas_porcentajes = [0.25, 0.25, 0.20, 0.20, 0.10]
 
 const calcularFichas = (cantidad, porcentajes) => {
   let valorEnFichas = parseFloat(cantidad) * 100;
@@ -8,7 +8,6 @@ const calcularFichas = (cantidad, porcentajes) => {
   let totalDeCentavos = 0
   let totalDeFichas = 0
   try {
-    console.log((valorEnFichas * 100) % 10)
     if ( (valorEnFichas * 100) % 10 !== 0) throw new Error('El dinero debe de poder dividirse entre 10 centavos');
     porcentajes.forEach((porcentaje, itr) => {
       let valorEnCentavos = (porcentaje * valorEnFichas)
@@ -19,7 +18,7 @@ const calcularFichas = (cantidad, porcentajes) => {
       cantidadFichasArr.push(cantidadDeFicha)
     })
   } catch (e) {
-    console.log(e.messageDe)
+    console.log(e.message)
   }
   return { 
     cantidadFichas: cantidadFichasArr,
@@ -38,39 +37,34 @@ function main() {
   let porcentajesEstado = inputPorcentajes.map(porcentajeElem => parseFloat(porcentajeElem.value))
   document.querySelector('#calculadora-elem').addEventListener('change', (e) => {
     let posicionInput = inputPorcentajes.indexOf(e.target)
-    console.log(e.target.id.startsWith('porcentaje'), e.target.tagName, posicionInput+1)
-    if (e.target.id.startsWith('porcentaje') && e.target.tagName === 'INPUT') {
+    if (e.target.id.startsWith('porcentaje') && e.target.tagName === 'INPUT' && e.target.value !== '') {
       let siguientePorcentajeElem
       if (inputPorcentajes.length === posicionInput+1)  siguientePorcentajeElem = inputPorcentajes[0]
       else  siguientePorcentajeElem = e.target.parentElement.nextElementSibling.querySelector('input[id^="porcentaje"]')
 
-      console.log(porcentajesEstado[posicionInput], parseFloat(e.target.value))
-      siguientePorcentajeElem.value = parseFloat(siguientePorcentajeElem.value) + (porcentajesEstado[posicionInput] - parseFloat(e.target.value))
-      porcentajesEstado[posicionInput] =  e.target.value
+      siguientePorcentajeElem.value = Math.round((parseFloat(siguientePorcentajeElem.value) + (porcentajesEstado[posicionInput] - parseFloat(e.target.value))) * 100) / 100
++      console.log(siguientePorcentajeElem)
++      porcentajesEstado[posicionInput] = e.target.value
++    } else if (e.target.value === '') {
++      e.target.value = porcentajesEstado[posicionInput]
     }
   })
   document.querySelector('#calculadora-elem').addEventListener('click', (e) => {
-    //console.log(e.currentTarget.querySelectorAll('input[id^="porcentaje"]'))
     let monto = e.currentTarget.querySelector('#cantidad-dinero').value
     if (e.target.id === 'calcular-btn' && monto !== '') {
       
-      let calculosFichas = calcularFichas(monto, porcentajesEstado.map(porcentajeElem => porcentajeElem.value))
+      let calculosFichas = calcularFichas(monto, porcentajesEstado)
 
-      console.log(fichas_porcentajes
-        .map((porcentaje, itr) => parseFloat(porcentajesEstado[itr].value))
-        .reduce((porcentajeTotal, porcentajeActual) => porcentajeTotal + porcentajeActual)
-      )
-
-      //console.log(calculosFichas)
       fichas_valores.forEach((ficha, itr) => {
-        //console.log(e.currentTarget.querySelector(`#valor-${String(ficha)} .calculo-fichas`))
         let calculoFichasElem = e.currentTarget.querySelector(`#valor-${String(ficha)} .calculo-fichas`)
         calculoFichasElem.innerHTML = ''
         e.currentTarget.querySelector('#total-fichas').innerHTML = 'Total de fichas: '
         e.currentTarget.querySelector('#total-centavos').innerHTML = 'Centavos Totales: '
         e.currentTarget.querySelector('#error-calculo').innerHTML = 'Error de calculo: '
+        e.currentTarget.querySelector('#total-porcentaje').innerHTML = 'Porcentaje total: '
 
         calculoFichasElem.innerHTML += `${calculosFichas.cantidadFichas[itr]} ― Valor en centavos: ${calculosFichas.valoresFichasCentavos[itr]} ¢` 
+        e.currentTarget.querySelector('#total-porcentaje').innerHTML += Math.round(porcentajesEstado.reduce((porcentajeTotal, porcentajeActual) => porcentajeTotal + porcentajeActual) * 100)
         e.currentTarget.querySelector('#total-fichas').innerHTML += calculosFichas.totalFichas
         e.currentTarget.querySelector('#total-centavos').innerHTML += calculosFichas.totalCentavos
         e.currentTarget.querySelector('#error-calculo').innerHTML += `${calculosFichas.cantidadCentavosOriginal-calculosFichas.totalCentavos} | Dinero original: ${calculosFichas.cantidadCentavosOriginal}`

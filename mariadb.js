@@ -2,12 +2,13 @@ const mariadb = require('mariadb');
 const pool = mariadb.createPool({
   host: 'localhost', 
   user:'roman', 
-  database: 'CasinoBanco',
+  database: 'casino_banco',
   password: 'rrrc130301',
   connectionLimit: 5
 })
 
 exports.sendQuery = async function sendQuery(query, params) {
+  let conn 
   try {
     conn = await pool.getConnection()
     const res = await conn.query(query, params)

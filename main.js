@@ -48,6 +48,10 @@ app.get('/calculadora', function(req, res) {
   res.sendFile(path.join(__dirname, 'templates/calculadora-fichas.html'));
 });
 
+app.get('/limite-pozo', (req, res) => {
+  res.sendFile(path.join(__dirname, 'templates/limite-pozo-max.html'));
+})
+
 app.get('/clientes', (req, res) => {
   console.log('que chingados')
   res.set({'Content-Type': 'application/json'})
@@ -63,12 +67,12 @@ app.post('/clientes', (req, res) => {
   bancodb.sendQuery('INSERT INTO clientes (nombre, cuenta) VALUES (?, ?)', [req.body.nombre, 0.000])
     .then(result => {
       console.log(result, 'resultado post clientes')
-      res.send().status(200)
+      res.send(String(result.insertId)).status(200)
     })
 })
 
 app.put('/clientes/:id', (req, res) => {
-  console.log(req.body.cuenta, 'nueva cuenta')
+  console.log(req.body.cuenta, 'CUENTA', req.params, 'ID')
   bancodb.sendQuery('UPDATE clientes SET cuenta = ? WHERE cliente_id = ?', [req.body.cuenta, req.params.id])
     .then(result => {
       console.log(result)
