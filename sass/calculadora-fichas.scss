@@ -66,28 +66,30 @@ main {
   width: 100%;
   color: #fff;
   font-size: 1.2rem;
-}
-#columnas-titulo span {
-  border: none;
-  border-left: solid #fff 1px;
-  background-color: #000;
-  padding: 0.5rem;
+
+  span {
+    border: none;
+    border-left: solid #fff 1px;
+    background-color: #000;
+    padding: 0.5rem;
+  }
 }
 
-input[id^=porcentaje], #columna-porcentaje-ficha {
+input[id^="porcentaje"], #columna-porcentaje-ficha {
   width: 12%;
 }
 
-.calculo-fichas, #columna-resultado-ficha {
+.calculo-fichas, #columna-resultado-ficha{
   width: 58%;
 }
+
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
 }
 
-input[id^=porcentaje] {
+input[id^="porcentaje"] {
   margin: 0rem 0.5rem;
   text-align: center;
   -moz-appearance: textfield;
@@ -96,19 +98,15 @@ input[id^=porcentaje] {
 #valor-100 span, #valor-100 b {
   color: #000;
 }
-
 #valor-50 span, #valor-50 b {
   color: #900;
 }
-
 #valor-30 span, #valor-30 b {
-  color: #009;
+  color:#009;
 }
-
 #valor-20 span, #valor-20 b {
   color: #272;
 }
-
 #valor-10 span, #valor-10 b {
   color: #606060;
   margin-bottom: 0;
@@ -118,13 +116,12 @@ input[id^=porcentaje] {
   font-size: 1.25rem;
 }
 
+
 @media only screen and (max-width: 700px) {
   * {
     font-size: 12px;
   }
   header > span {
-    font-size: 2em;
+    font-size: 2em
   }
 }
-
-/*# sourceMappingURL=calculadora-fichas.css.map */

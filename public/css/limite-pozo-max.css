@@ -1,0 +1,38 @@
+#valores-mesa-cont {
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+#valores-mesa-elem {
+  width: 100%;
+}
+
+#valores-mesa-campos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  font-size: 1.2rem;
+}
+#valores-mesa-campos div {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding-bottom: 1rem;
+}
+#valores-mesa-campos #ultima-apuesta-cont {
+  display: none;
+}
+#valores-mesa-campos label {
+  padding: 0.25rem;
+  padding-right: 1rem;
+}
+#valores-mesa-campos input[type=number] {
+  text-align: center;
+  padding: 0.5rem;
+}
+
+#valores-mesa-btns input[type=button] {
+  padding: 0.5em;
+}
+
+/*# sourceMappingURL=limite-pozo-max.css.map */

@@ -41,12 +41,12 @@ function main() {
       let siguientePorcentajeElem
       if (inputPorcentajes.length === posicionInput+1)  siguientePorcentajeElem = inputPorcentajes[0]
       else  siguientePorcentajeElem = e.target.parentElement.nextElementSibling.querySelector('input[id^="porcentaje"]')
-
+      console.log(Math.round((parseFloat(siguientePorcentajeElem.value) + (porcentajesEstado[posicionInput] - parseFloat(e.target.value))) * 100) / 100)
       siguientePorcentajeElem.value = Math.round((parseFloat(siguientePorcentajeElem.value) + (porcentajesEstado[posicionInput] - parseFloat(e.target.value))) * 100) / 100
-+      console.log(siguientePorcentajeElem)
-+      porcentajesEstado[posicionInput] = e.target.value
-+    } else if (e.target.value === '') {
-+      e.target.value = porcentajesEstado[posicionInput]
+      console.log(siguientePorcentajeElem)
+      porcentajesEstado[posicionInput] = e.target.value
+    } else if (e.target.value === '') {
+      e.target.value = porcentajesEstado[posicionInput]
     }
   })
   document.querySelector('#calculadora-elem').addEventListener('click', (e) => {
@@ -63,7 +63,7 @@ function main() {
         e.currentTarget.querySelector('#error-calculo').innerHTML = 'Error de calculo: '
         e.currentTarget.querySelector('#total-porcentaje').innerHTML = 'Porcentaje total: '
 
-        calculoFichasElem.innerHTML += `${calculosFichas.cantidadFichas[itr]} ― Valor en centavos: ${calculosFichas.valoresFichasCentavos[itr]} ¢` 
+        calculoFichasElem.innerHTML += `${calculosFichas.cantidadFichas[itr]} ― valor real: ${calculosFichas.valoresFichasCentavos[itr]} ¢` 
         e.currentTarget.querySelector('#total-porcentaje').innerHTML += Math.round(porcentajesEstado.reduce((porcentajeTotal, porcentajeActual) => porcentajeTotal + porcentajeActual) * 100)
         e.currentTarget.querySelector('#total-fichas').innerHTML += calculosFichas.totalFichas
         e.currentTarget.querySelector('#total-centavos').innerHTML += calculosFichas.totalCentavos

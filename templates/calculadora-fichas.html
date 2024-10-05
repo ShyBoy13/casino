@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/general.css">
   <link rel="stylesheet" href="css/calculadora-fichas.css">
   <script defer src="js/calculadora-fichas.js"> </script>
   <title>Calculadora de fichas</title>
@@ -24,25 +25,50 @@
        <input id="calcular-btn" type="button" value="Calcular">
       </article>
       <article id="cantidad-fichas-cont">
+        <div id="columnas-titulo">
+          <span id="columna-valor-ficha">Valor de la ficha</span>
+          <span id="columna-porcentaje-ficha">Porcentaje</span>
+          <span id="columna-resultado-ficha">Resultado</span>
+        </div>
         <div class="ficha" id="valor-100">
+          <div class="ficha-valor-cont">
+            <span class="ficha-texto">Fichas de ❂ ⤜</span>
+            <input type="number" class="ficha-valor" value="100">
+          </div>
           <input id="porcentaje-100" type="number" max="1" min="0" step="0.005" name="" value="0.2">
-          <p>Fichas de <span class="ficha-valor">❂100⤜</span><span class="calculo-fichas"></span></p>
+          <span class="calculo-fichas"></span>
         </div>
         <div class="ficha" id="valor-50">
+          <div class="ficha-valor-cont">
+            <span class="ficha-texto">Fichas de ❂ ⤜</span>
+            <input type="number" class="ficha-valor" value="50">
+          </div>
           <input id="porcentaje-50" type="number" max="1" min="0" step="0.005" name="" value="0.2">
-          <p>Fichas de <span class="ficha-valor">❂50⤜</span><span class="calculo-fichas"></span></p>
+          <span class="calculo-fichas"></span>
         </div>
         <div class="ficha" id="valor-30">
+          <div class="ficha-valor-cont">
+            <span class="ficha-texto">Fichas de ❂ ⤜</span>
+            <input type="number" class="ficha-valor" value="30">
+          </div>
           <input id="porcentaje-30" type="number" max="1" min="0" step="0.005" name="" value="0.2">
-          <p>Fichas de <span class="ficha-valor">❂30⤜</span><span class="calculo-fichas"></span></p>
+          <span class="calculo-fichas"></span>
         </div>
         <div class="ficha" id="valor-20">
+          <div class="ficha-valor-cont">
+            <span class="ficha-texto">Fichas de ❂ ⤜</span>
+            <input type="number" class="ficha-valor" value="20">
+          </div>
           <input id="porcentaje-20" type="number" max="1" min="0" step="0.005" name="" value="0.2">
-          <p>Fichas de <span class="ficha-valor">❂20⤜</span><span class="calculo-fichas"></span></p>
+          <span class="calculo-fichas"></span>
         </div>
         <div class="ficha" id="valor-10">
+          <div class="ficha-valor-cont">
+            <span class="ficha-texto">Fichas de ❂ ⤜</span>
+            <input type="number" class="ficha-valor" value="10">
+          </div>
           <input id="porcentaje-10" type="number" max="1" min="0" step="0.005" name="" value="0.2">
-          <p>Fichas de <span class="ficha-valor">❂10⤜</span><span class="calculo-fichas"></span></p>
+          <span class="calculo-fichas"></span>
         </div>
       </article>
       <article id="datos-calculados">

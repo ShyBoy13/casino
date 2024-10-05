@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="">
-  <script defer src=""> </script>
+  <link rel="stylesheet" href="css/general.css">
+  <link rel="stylesheet" href="css/limite-pozo-max.css">
+  <script defer src="js/limite-pozo-max.js"> </script>
   <title>Casino Virtual</title>
 </head>
 <body>
@@ -13,10 +14,34 @@
       <a href="/">Inicio</a>
     </nav>
     <section id="titulo-elem">
-      <span id='titulo-text'>Calcular limite maximo del pozo</span>
+      <span id='titulo-texto'>Calcular limite maximo del pozo</span>
     </section>
   </header>
   <main>
+    <section id="valores-mesa-cont">
+      <article id="valores-mesa-elem">
+        <div id="valores-mesa-campos">
+          <div id="ciega-chica-cont">
+            <label for="ciega-chica">Ciega chica</label>
+            <input id="ciega-chica" type="number" name="">
+          </div>
+          <div id="ciega-grande-cont">
+            <label for="ciega-grande">Ciega grande</label>
+            <input id="ciega-grande" type="number" name="">
+          </div>
+          <div id="ultima-apuesta-cont">
+            <label for="ultima-apuesta">Ultima apuesta</label>
+            <input id="ultima-apuesta" type="number" name="">
+          </div>
+        </div>
+        <div id="valores-mesa-btns">
+          <input id="btn-calcular" min="0" type="button" value="Definir Ciegas">
+          <input id="btn-reiniciar" min="0" type="button" value="Reiniciar ronda">
+        </div>
+        <output id="limite-pozo"></output>
+
+      </article>
+    </section>
   </main>
 </body>
 </html>

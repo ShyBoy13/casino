@@ -52,6 +52,10 @@ app.get('/limite-pozo', (req, res) => {
   res.sendFile(path.join(__dirname, 'templates/limite-pozo-max.html'));
 })
 
+app.get('/calcular-probs', (req, res) => {
+  res.sendFile(path.join(__dirname, 'templates/calcular-probabilidades.html'));
+})
+
 app.get('/clientes', (req, res) => {
   console.log('que chingados')
   res.set({'Content-Type': 'application/json'})
