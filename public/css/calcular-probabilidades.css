@@ -1,0 +1,107 @@
+#mesa-opciones {
+  height: 4rem;
+  border: 1px solid #444;
+  margin-bottom: 1rem;
+  display: flex;
+  padding: 0.5rem;
+  align-items: center;
+}
+#mesa-opciones input, #mesa-opciones select, #mesa-opciones button {
+  padding: 0.25rem 0.25rem;
+}
+#mesa-opciones > :nth-child(n+2) {
+  margin-left: 1rem;
+}
+
+#mesa-capacidad-cont {
+  display: flex;
+}
+#mesa-capacidad-cont #mesa-capacidad {
+  width: 5.5rem;
+  text-align: center;
+}
+#mesa-capacidad-cont #tipo-poker {
+  padding: 0.25rem 0.25rem;
+}
+#mesa-capacidad-cont .control-capacidad-btn {
+  width: 1.5rem;
+}
+
+#mesa {
+  display: grid;
+  padding: 1.5rem;
+  background: radial-gradient(circle, rgb(9, 1, 148) 0%, rgb(2, 0, 119) 50%, rgb(0, 0, 84) 100%);
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  border-radius: 20px;
+  justify-content: center;
+  justify-items: center;
+}
+#mesa #cartas-comunitarias {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  grid-column-start: 1;
+  grid-column-end: 6;
+  grid-row-start: 2;
+  grid-row-end: 4;
+}
+#mesa #cartas-comunitarias .carta {
+  margin: 1rem;
+  font-size: 2.5rem;
+  border: none;
+  width: 5rem;
+  height: 7.5rem;
+}
+
+.jugador, .asiento {
+  padding: 0.5rem;
+  font-size: 1.5rem;
+}
+.jugador .seleccionar-cartas-btn, .asiento .seleccionar-cartas-btn {
+  width: 100%;
+  font-size: 1rem;
+  padding: 0.25rem;
+}
+.jugador .carta, .asiento .carta {
+  border: none;
+}
+
+.cartas-jugador {
+  width: 9rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.carta {
+  font-size: 2rem;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 4rem;
+  height: 6rem;
+  border: 2px solid #000;
+  background-color: #f0f0dd;
+}
+.carta span {
+  user-select: none;
+}
+.carta[disabled=disabled] {
+  opacity: 0.5;
+}
+
+#todas-cartas {
+  display: none;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+#todas-cartas[class=mostrar-flex] {
+  display: flex;
+}
+
+.jugador-seleccionado {
+  border: 3px solid #ffdd55;
+}
+
+/*# sourceMappingURL=calcular-probabilidades.css.map */

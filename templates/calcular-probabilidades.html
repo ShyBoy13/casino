@@ -1,13 +1,34 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" conent="width=device-width,initial-scale=1">
   <link rel="stylesheet" href="css/general.css">
+  <link rel="stylesheet" href="css/calcular-probabilidades.css">
   <script defer src="js/calcular-probabilidades.js"></script>
   <title>Calcular probabilidades</title>
 </head>
 <body>
-  <main></main>  
+  <main>
+    <section id="mesa-cont">
+      <section id="mesa-opciones">
+        <div id="mesa-capacidad-cont">
+          <input id="mesa-capacidad" type="number" name="" min="2" max="9" step="1" required readonly placeholder="Lugares">
+          <input id="sumar-capacidad" class="control-capacidad-btn" type="button" value="+">
+          <input id="restar-capacidad" class="control-capacidad-btn" type="button" value="-">
+        </div>
+        <select name="tipo-poker" id="tipo-poker">
+          <option hidden value="">Tipo de poker</option>
+          <option value="holdem">holdem</option>
+        </select>
+        <button id="repartir-cartas-btn">Repartir</button>
+        <button id="crear-mesa-btn">Crear Mesa</button>
+      </section>
+      <section id="todas-cartas"></section>
+      <section id="mesa">
+        <article id="cartas-comunitarias"></article>
+      </section>
+    </section> 
+  </main>  
 </body>
 </html>
