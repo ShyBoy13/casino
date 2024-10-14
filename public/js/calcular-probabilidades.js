@@ -204,6 +204,13 @@ class MesaAbstracta {
     return cartasMezcladas
   }
 
+  obtenerCartasMesa() {
+    let jugadores = this.asientos.filter(asiento => asiento !== undefined)
+    let cartasJugadores = jugadores.reduce((cartas, jugador) => cartas.concat(jugador.mano), [])
+
+    return [cartasJugadores, this.cartasComunitarias] 
+  }
+
   limpiarCartas() {
     this.asientos = new Array(this.asientos.length).fill(undefined)
   }
@@ -249,28 +256,38 @@ class MesaProbabilidadesHoldem extends MesaAbstracta {
     super(capacidad, baraja)
   }
 
-  repartirCartas () {
-    let jugadores = this.asientos.filter(asiento => asiento !== undefined)
-    let cartasJugadores = jugadores.reduce((cartas, jugador) => cartas.concat(jugador.mano), [])
-    console.log(jugadores)
-    console.log(cartasJugadores)
-    let cartasRestantes = this.baraja.filter(carta => !cartasJugadores.includes(carta))
-    let cartasMezcladas = MesaAbstracta.mezclarCartas(cartasRestantes)
-    let cartaARepartir = 0
-    let siguienteCarta 
-
-    for ( let an=0; an<this.asientos.length; an++ ) {
-      if ( this.asientos[an] == undefined ) {
-        siguienteCarta = cartaARepartir + 2
-        this.agregarJugador(new Jugador(an), cartasMezcladas.slice(cartaARepartir, siguienteCarta))
-        cartaARepartir = siguienteCarta
+  repartirCartas (cartasOcultas, comunitarias) {
+    let cartasJugadores
+    if ( cartasOcultas !== undefined && cartasOcultas !== undefined ) {
+      cartasJugadores = cartasOcultas
+      for ( let an=0; an<this.asientos.length; an++ ) {
+        if ( this.asientos[an] == undefined ) {
+          this.agregarJugador(new Jugador(an), cartasJugadores[an])
+        }
       }
+      this.defCartasComunitarias(comunitarias )
+    } else {
+      let jugadores = this.asientos.filter(asiento => asiento !== undefined)
+      cartasJugadores = jugadores.reduce((cartas, jugador) => cartas.concat(jugador.mano), [])
+      console.log(jugadores)
+      console.log(cartasJugadores)
+      let cartasRestantes = this.baraja.filter(carta => !cartasJugadores.includes(carta))
+      let cartasMezcladas = MesaAbstracta.mezclarCartas(cartasRestantes)
+      let cartaARepartir = 0
+      let siguienteCarta 
+
+      for ( let an=0; an<this.asientos.length; an++ ) {
+        if ( this.asientos[an] == undefined ) {
+          siguienteCarta = cartaARepartir + 2
+          this.agregarJugador(new Jugador(an), cartasMezcladas.slice(cartaARepartir, siguienteCarta))
+          cartaARepartir = siguienteCarta
+        }
+      }
+      //console.log(cartasMezcladas, this.cartasComunitarias, this.asientos.find((p) => p != undefined).mano)
     }
-    this.defCartasComunitarias(cartasMezcladas, cartaARepartir, cartaARepartir+5)
-    //console.log(cartasMezcladas, this.cartasComunitarias, this.asientos.find((p) => p != undefined).mano)
   }
   
-  obtenerManos () {
+  ponerMejoresManos () {
     let manoDeSiete
     for ( let jugador of this.asientos ) {
       manoDeSiete = jugador.mano.concat(this.cartasComunitarias)
@@ -314,7 +331,6 @@ class MesaProbabilidadesHoldem extends MesaAbstracta {
       for ( let c=0; c<5 && esCoincidencia; c++ ) {
         if ( manos[0].mejorMano.mano[c].split('-')[0] == manos[mp].mejorMano.mano[c].split('-')[0] ) {
           coincidencia.push(manos[0].mejorMano.mano[c])
-          console.log(coincidencia)
           esCoincidencia = true
         } else {
           esCoincidencia = false
@@ -351,6 +367,7 @@ class MesaProbabilidadesHoldem extends MesaAbstracta {
   }
 
   obtenerGanador() {
+    this.ponerMejoresManos()
     let mayorRangoPos = 0
     for ( let an=1; an < this.asientos.length; an++ ) {
       if ( this.asientos[mayorRangoPos].mejorMano.valor < this.asientos[an].mejorMano.valor ) {
@@ -373,8 +390,6 @@ class MesaProbabilidadesHoldem extends MesaAbstracta {
     let ganador = this.obtenerMejorMano(manosFinales)
 
     console.log(ganador)
-
-
   }
 
   agregarJugador(jugador, cartas) {
@@ -570,9 +585,8 @@ const crearMesa = (mesaObj, capacidad) => {
 
 const repartirCartas = (mesa) => {
   mesa.limpiarCartas()
-  mesa.repartirCartas()
+  mesa.repartirCartas([['6-C','5-E'], ['11-T','11-D'], ['14-E','13-E'], ['6-D','2-D'], ['2-E','2-T'], ['10-T','13-D'], ['8-D','8-E'], ['5-T','4-E'], ['9-C','2-C']], ['13-D', '3-T', '4-T', '6-E', '7-T'])
   document.querySelector('#cartas-comunitarias').replaceChildren(...crearCartasElems(mesa.cartasComunitarias))
-  mesa.obtenerManos()
   mesa.asientos.forEach( a => {
     document.querySelector(`.jugador[posicion="${a.asiento}"] > cartas-jugador`)
     document.querySelector(`.jugador[posicion-jugador="${a.asiento}"] > .cartas-jugador`).replaceChildren(...crearCartasElems(a.mano))
