@@ -17,6 +17,7 @@ class Jugador {
     this.asiento = asiento
     this.mano = []
     this.mejorMano = {}
+    this.tipo = ''
   }
 }
 
@@ -126,10 +127,12 @@ class MesaAbstracta {
         cartaKicker = mejorMano[3]
         valorMano = 3
       }
+    } else {
+      return {mano: [], valor: undefined, cartaAlta: undefined, kicker: undefined}
     }
     //console.log(pares, 'pares')
     //console.log(mejorMano, 'mejor mano de pares')
-    return {mano: MesaAbstracta.unirCartas(mejorMano), valor: valorMano, cartaAlta: mejorMano[0], kicker:  cartaKicker}
+    return {mano: MesaAbstracta.unirCartas(mejorMano), valor: valorMano, cartaAlta: mejorMano[0][0], kicker:  cartaKicker}
   }
 
   static checarEscalera(cartas) {
@@ -164,7 +167,7 @@ class MesaAbstracta {
     escalera = mano.filter((m, i) => escalera.includes(i))
     //console.log(escalera, 'escalera')
     //
-    if ( escalera.length > 0 ) return {mano: MesaAbstracta.unirCartas(escalera), valor: 5, cartaAlta: escalera[0], kicker:  escalera[1]}
+    if ( escalera.length > 0 ) return {mano: MesaAbstracta.unirCartas(escalera), valor: 5, cartaAlta: escalera[0][0], kicker:  escalera[1]}
     else return {mano: [], valor: undefined, cartaAlta: undefined, kicker: undefined}
 
   }
@@ -182,7 +185,7 @@ class MesaAbstracta {
     if ( color.length < 4 ) {
       color = cartas.filter(c => c.endsWith('T'))
     }
-    if ( color.length > 4 ) return {mano: color.slice(0, 5), valor: 6, cartaAlta: color[0], kicker:  color[1]}
+    if ( color.length > 4 ) return {mano: color.slice(0, 5), valor: 6, cartaAlta: parseInt(color[0].split('-')[0]), kicker:  color[1]}
     return {mano: [], valor: undefined, cartaAlta: undefined, kicker: undefined}
   }
 
@@ -267,7 +270,6 @@ class MesaProbabilidadesHoldem extends MesaAbstracta {
     //console.log(cartasMezcladas, this.cartasComunitarias, this.asientos.find((p) => p != undefined).mano)
   }
   
-  
   obtenerManos () {
     let manoDeSiete
     for ( let jugador of this.asientos ) {
@@ -283,15 +285,96 @@ class MesaProbabilidadesHoldem extends MesaAbstracta {
           }
         }
       }
-      jugador.mejorMano = this.obtenerMejorMano(manoDeSiete)
+      jugador.mejorMano = this.obtenerMejoresCincoCartas(manoDeSiete)
     }
   }
 
-  obtenerMejorMano(sieteCartas) {
+  obtenerMejoresCincoCartas(sieteCartas) {
     console.log(MesaAbstracta.checarColor(sieteCartas), MesaAbstracta.checarEscalera(sieteCartas), MesaAbstracta.checarPares(sieteCartas))
     let mejorMano = [MesaAbstracta.checarColor(sieteCartas), MesaAbstracta.checarEscalera(sieteCartas), MesaAbstracta.checarPares(sieteCartas)].find( m => m.mano.length > 4 )
     if ( mejorMano !== undefined ) return mejorMano
-    return {}
+    return {mano: MesaAbstracta.unirCartas(sieteCartas.slice(0, 5)), valor: 1, cartaAlta: undefined, kicker:  undefined}
+  }
+
+  obtenerKicker(manosDiferentes) {
+    return manosDiferentes.reduce( (da, ds) => {
+      return parseInt(da[0].split('-')[0]) > parseInt(ds[0].split('-')[0]) ? da[0] : ds[0] 
+    })
+  }
+
+  obtenerMejorMano(manos) {
+    let coincidencias = []
+    let igualdad
+    let ganador
+    console.log(manos, 'manos finales')
+    if ( manos.length === 1 ) return manos
+    for ( let mp=1; mp < manos.length; mp++ ) {
+      let coincidencia = []
+      let esCoincidencia = true
+      for ( let c=0; c<5 && esCoincidencia; c++ ) {
+        if ( manos[0].mejorMano.mano[c].split('-')[0] == manos[mp].mejorMano.mano[c].split('-')[0] ) {
+          coincidencia.push(manos[0].mejorMano.mano[c])
+          console.log(coincidencia)
+          esCoincidencia = true
+        } else {
+          esCoincidencia = false
+        }
+        
+      }
+      coincidencias.push(coincidencia)
+    }
+    console.log(coincidencias)
+    if (coincidencias.length === 0) {
+      return manos.find(j => j.mejorMano.mano.includes(this.obtenerKicker(manos.map(j => j.mejorMano.mano))) )
+    }
+
+    igualdad = coincidencias.reduce( ( coincidenciaMasCorta, coincidencia ) => {
+      if (coincidenciaMasCorta.length < coincidencia.length) {
+        return coincidenciaMasCorta 
+      }
+      return coincidencia
+    })
+    igualdad = MesaAbstracta.separarCartas(igualdad).map( c => String(c[0]) )
+    console.log(igualdad)
+
+    let diferencias = manos.map( j => j.mejorMano.mano.filter(c => !igualdad.includes(c.split('-')[0])) )
+    console.log(diferencias)
+
+    if ( diferencias.find( d => d === undefined ) ) {
+      return manos  
+    }
+
+    let kickerMasAlto = this.obtenerKicker(diferencias)
+    console.log(kickerMasAlto)
+
+    return manos.filter( (j) => j.mejorMano.mano.includes(kickerMasAlto) )
+  }
+
+  obtenerGanador() {
+    let mayorRangoPos = 0
+    for ( let an=1; an < this.asientos.length; an++ ) {
+      if ( this.asientos[mayorRangoPos].mejorMano.valor < this.asientos[an].mejorMano.valor ) {
+        mayorRangoPos = an
+      }
+    }
+    console.log(this.asientos[mayorRangoPos])
+
+    let mejoresManos = this.asientos.filter(asiento => asiento.mejorMano.valor === this.asientos[mayorRangoPos].mejorMano.valor)
+    console.log(mejoresManos)
+
+    let cartaMasAlta = mejoresManos.reduce( (mayorCartaAlta, asiento) => {
+      if ( mayorCartaAlta < asiento.mejorMano.cartaAlta ) {
+        return asiento.mejorMano.cartaAlta
+      }
+      return mayorCartaAlta
+    }, 0)
+    
+    let manosFinales = mejoresManos.filter((asiento) => asiento.mejorMano.mano[0].startsWith(String(cartaMasAlta)))
+    let ganador = this.obtenerMejorMano(manosFinales)
+
+    console.log(ganador)
+
+
   }
 
   agregarJugador(jugador, cartas) {
@@ -494,6 +577,8 @@ const repartirCartas = (mesa) => {
     document.querySelector(`.jugador[posicion="${a.asiento}"] > cartas-jugador`)
     document.querySelector(`.jugador[posicion-jugador="${a.asiento}"] > .cartas-jugador`).replaceChildren(...crearCartasElems(a.mano))
   })
+
+  mesa.obtenerGanador()
   console.log(mesa.cartasComunitarias, mesa.asientos.map(a => a.mano))
 }
 
