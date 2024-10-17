@@ -37,6 +37,9 @@
   justify-content: center;
   justify-items: center;
 }
+#mesa .carta {
+  border-radius: 5px;
+}
 #mesa #cartas-comunitarias {
   display: flex;
   align-items: center;
@@ -54,16 +57,16 @@
   height: 7.5rem;
 }
 
-.jugador, .asiento {
+.jugador, .jugador-extra {
   padding: 0.5rem;
   font-size: 1.5rem;
 }
-.jugador .seleccionar-cartas-btn, .asiento .seleccionar-cartas-btn {
+.jugador .seleccionar-cartas-btn, .jugador-extra .seleccionar-cartas-btn {
   width: 100%;
   font-size: 1rem;
   padding: 0.25rem;
 }
-.jugador .carta, .asiento .carta {
+.jugador .carta, .jugador-extra .carta {
   border: none;
 }
 
@@ -102,6 +105,10 @@
 
 .jugador-seleccionado {
   border: 3px solid #ffdd55;
+}
+
+.ganador {
+  border: 2px solid #55ff55;
 }
 
 /*# sourceMappingURL=calcular-probabilidades.css.map */

@@ -38,6 +38,10 @@
   justify-content: center;
   justify-items: center;
 
+  .carta {
+    border-radius: 5px;
+  }
+
   #cartas-comunitarias {
     display: flex;
     align-items: center;
@@ -58,7 +62,7 @@
 }
 
 
-.jugador, .asiento {
+.jugador, .jugador-extra {
   padding: 0.5rem;
   font-size: 1.5rem;
 
@@ -112,4 +116,8 @@
 
 .jugador-seleccionado { 
   border: 3px solid #ffdd55;
+}
+
+.ganador {
+  border: 2px solid #55ff55;
 }
