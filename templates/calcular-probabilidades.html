@@ -18,8 +18,14 @@
           <input id="sumar-capacidad" class="control-capacidad-btn" type="button" value="+">
           <input id="restar-capacidad" class="control-capacidad-btn" type="button" value="-">
         </div>
+        <select name="etapa-mesa" id="etapa-mesa">
+          <option hidden value="5">Etapa</option>
+          <option value="3">flop</option>
+          <option value="4">turn</option>
+          <option value="5">river</option>
+        </select>
         <select name="tipo-poker" id="tipo-poker">
-          <option hidden value="">Tipo de poker</option>
+          <option hidden value="holdem">Tipo de poker</option>
           <option value="holdem">holdem</option>
         </select>
         <button id="limpiar-cartas-extra-btn">Limpiar Cartas Extra</button>

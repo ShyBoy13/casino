@@ -6,7 +6,7 @@ window.mesaDatos = {
   mesaElem: undefined,
   mesaObj: undefined,
   jugadorActual: undefined,
-  ganadores: [],
+  ganadores: undefined, 
 
 }
 const appendAllChildren = (element, children) => {
@@ -258,21 +258,22 @@ class MesaProbabilidadesHoldem extends MesaAbstracta {
     super(capacidad, baraja)
   }
 
-  repartirCartas (cartasOcultas, comunitarias) {
-    let cartasJugadores
-    if ( comunitarias !== undefined && cartasOcultas !== undefined ) {
-      cartasJugadores = cartasOcultas
+  repartirCartas (numeroComunitarias = 5, ...cartas) {
+    // espera que: ...cartas = (['carta'*2], ['comunitara'*5]) 
+    if ( cartas.length === 2) {
+      let cartasOcultas = cartas[0]
+      let comunitarias = cartas[1]
       for ( let an=0; an<this.asientos.length; an++ ) {
         if ( this.asientos[an] == undefined ) {
-          this.agregarJugador(new Jugador(an), cartasJugadores[an])
+          this.agregarJugador(new Jugador(an), cartasOculas[an])
         }
       }
-      this.defCartasComunitarias(comunitarias)
+      this.defCartasComunitarias(comunitarias, 0, numeroComunitarias)
     } else {
       let jugadores = this.asientos.filter(asiento => asiento !== undefined)
       console.log(this.asientos)
       console.log(jugadores)
-      cartasJugadores = jugadores.reduce((cartas, jugador) => cartas.concat(jugador.mano), [])
+      let cartasJugadores = jugadores.reduce((cartas, jugador) => cartas.concat(jugador.mano), [])
       console.log(jugadores)
       console.log(cartasJugadores)
       let cartasRestantes = this.baraja.filter(carta => !cartasJugadores.includes(carta))
@@ -287,7 +288,7 @@ class MesaProbabilidadesHoldem extends MesaAbstracta {
           cartaARepartir = siguienteCarta
         }
       }
-      this.defCartasComunitarias(cartasMezcladas, cartaARepartir, cartaARepartir+5)
+      this.defCartasComunitarias(cartasMezcladas, cartaARepartir, cartaARepartir+numeroComunitarias)
       //console.log(cartasMezcladas, this.cartasComunitarias, this.asientos.find((p) => p != undefined).mano)
     }
   }
@@ -312,10 +313,9 @@ class MesaProbabilidadesHoldem extends MesaAbstracta {
   }
 
   obtenerMejoresCincoCartas(sieteCartas) {
-    //console.log(MesaAbstracta.checarColor(sieteCartas), MesaAbstracta.checarEscalera(sieteCartas), MesaAbstracta.checarPares(sieteCartas))
     let mejorMano = [MesaAbstracta.checarColor(sieteCartas), MesaAbstracta.checarEscalera(sieteCartas), MesaAbstracta.checarPares(sieteCartas)].find( m => m.mano.length > 4 )
     if ( mejorMano !== undefined ) return mejorMano
-    return {mano: MesaAbstracta.unirCartas(sieteCartas.slice(0, 5)), valor: 1, cartaAlta: sieteCartas[0]}
+    return {mano: MesaAbstracta.unirCartas(sieteCartas.slice(0, 5)), valor: 1, cartaAlta: sieteCartas[0][0]}
   }
 
   obtenerKicker(manosDiferentes) {
@@ -402,10 +402,8 @@ class MesaProbabilidadesHoldem extends MesaAbstracta {
         mayorRangoPos = an
       }
     }
-    console.log(this.asientos[mayorRangoPos])
 
     let mejoresManos = this.asientos.filter(asiento => asiento.mejorMano.valor === this.asientos[mayorRangoPos].mejorMano.valor)
-    console.log(mejoresManos)
 
     let cartaMasAlta = mejoresManos.reduce( (mayorCartaAlta, asiento) => {
       if ( mayorCartaAlta < asiento.mejorMano.cartaAlta ) {
@@ -624,7 +622,7 @@ const limpiarCartasExtra = () => {
   mesaDatos.mesaElem.querySelector('#cartas-comunitarias').replaceChildren()
 }
 
-const repartirCartas = (repeticiones = 1) => {
+const repartirCartas = (repeticiones = 1, etapaMesa) => {
   //mesa.repartirCartas([['6-C','5-E'], ['11-T','11-D'], ['14-E','13-E'], ['6-D','2-D'], ['2-E','2-T'], ['10-T','13-D'], ['8-D','8-E'], ['5-T','4-E'], ['9-C','2-C']], ['13-D', '3-T', '4-T', '6-E', '7-T'])
   //mesaDatos.mesaObj.repartirCartas([['9-C', '11-T'], ['8-D', '5-T'], ['5-D', '14-C'], ['14-D', '3-T'], ['4-E', '9-T'], ['13-T', '12-T'], ['6-C', '11-D'], ['10-D', '7-D'], ['6-T', '13-D']], ['6-E', '12-E', '9-D', '4-T', '10-E'])
   //mesaDatos.mesaObj.repartirCartas([['13-D', '8-T'], ['12-T', '9-E'], ['10-C', '7-C'], ['10-T', '6-T'],['13-C', '3-D'], ['9-C', '7-E'], ['12-C', '2-E'], ['11-C', '6-D'], ['11-E', '3-C']], ['6-E', '13-T', '5-C', '7-D', '2-C'])
@@ -638,7 +636,8 @@ const repartirCartas = (repeticiones = 1) => {
     console.log(posicionJugadores)
     limpiarCartasExtra()
 
-    mesaDatos.mesaObj.repartirCartas()
+    mesaDatos.mesaObj.repartirCartas(etapaMesa)
+    if ( r === 1 ) console.log(mesaDatos.mesaObj.obtenerCartasMesa(), 'cartas de la mesa')
     if ( r === repeticiones ) {
       document.querySelector('#cartas-comunitarias').replaceChildren(...crearCartasElems(mesaDatos.mesaObj.cartasComunitarias))
       mesaDatos.mesaObj.asientos.forEach( a => {
@@ -663,7 +662,6 @@ const repartirCartas = (repeticiones = 1) => {
     console.log(Object.values(ganadasJugadores).map( ganadas => 100/(repeticiones / ganadas) ))
 
   }
-  console.log(mesaDatos.mesaObj.obtenerCartasMesa(), 'cartas de la mesa')
 }
 
 
@@ -676,20 +674,23 @@ const iniciarMesa = () => {
     if ( e.target.id === 'crear-mesa-btn' && mesaCapacidadElem.value !== '') {
       let capacidad = parseInt(mesaOpcionesElem.querySelector('#mesa-capacidad').value)
       mesaDatos.mesaObj = new MesaProbabilidadesHoldem(capacidad, CARTAS)
+      mesaDatos.ganadores = []
       crearMesa(capacidad)
       document.querySelector('#todas-cartas').classList.add('mostrar-flex')
+
     } else if (e.target.classList.contains('control-capacidad-btn')) {
       let capacidadActual = parseInt(mesaCapacidadElem.value)
-      if ( mesaCapacidadElem.value === '' )  mesaCapacidadElem.value = 2
 
       if ( e.target.id.startsWith('sumar') && capacidadActual < 9) {
         mesaCapacidadElem.value = (parseInt(mesaCapacidadElem.value)+1).toString()
       } else if ( e.target.id.startsWith('restar') && capacidadActual > 2) {
         mesaCapacidadElem.value = (parseInt(mesaCapacidadElem.value)-1).toString()
       }
+
     } else if ( e.target.id === 'repartir-cartas-btn' ) {
       document.querySelector('#todas-cartas').classList.remove('mostrar-flex')
-      repartirCartas(1000)
+      repartirCartas(100, parseInt(mesaOpcionesElem.querySelector('#etapa-mesa').value))
+
     } else if ( e.target.id === 'limpiar-cartas-extra-btn' ) {
       limpiarCartasExtra()
     }
