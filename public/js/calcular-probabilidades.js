@@ -16,12 +16,14 @@ const appendAllChildren = (element, children) => {
 }
 
 class Jugador {
+  extra
   constructor(asiento) {
     this.posicion = 0 
     this.asiento = asiento
     this.mano = []
     this.mejorMano = {}
     this.tipo = ''
+    this.extra = true
   }
 }
 
@@ -51,7 +53,6 @@ class MesaAbstracta {
     let pares = []
     let mejorMano = []
     let valorMano = 1
-    let cartaKicker
     let manoCopia
           
     manoCopia = cartas.slice()
@@ -82,7 +83,6 @@ class MesaAbstracta {
 
     if ( pares.length === 1) {
       mejorMano = pares[0].concat(noPares.slice(0, 5 - pares[0].length))
-      cartaKicker = noPares[0]
       valorMano = Math.pow(2, pares[0].length-1)
 
     } else if ( pares.length === 2 ) {
@@ -90,7 +90,6 @@ class MesaAbstracta {
       if ( hayPoker !== undefined ) {
         if ( noPares.length === 0 ) {
           mejorMano = hayPoker.concat(pares.filter((par) => par.length === 3)[0])
-          cartaKicker = noPares[0]
         } else {
           if ( noPares[0][0] > pares.filter((par) => par.length === 2)[0][0][0]) {
             mejorMano = hayPoker.concat(noPares)
@@ -98,12 +97,10 @@ class MesaAbstracta {
             mejorMano = hayPoker.concat([pares.filter((par) => par.length === 2)[0][0]])
           }
         }
-        cartaKicker = mejorMano[4]
         valorMano = 8
       } else if (pares[0].length === 3 && pares[1].length === 3) {
         mejorMano = pares[0].concat(pares[1].slice(0, 2))
 
-        cartaKicker = mejorMano[3]
         valorMano = 7
       } else if (pares[0].length === 3 || pares[1].length === 3) {
         if ( pares[0].length > pares[1].length) {
@@ -111,10 +108,8 @@ class MesaAbstracta {
         } else {
           mejorMano = pares[1].concat(pares[0])
         }
-        cartaKicker = mejorMano[3]
         valorMano = 7
       } else {
-        cartaKicker = mejorMano[3]
         valorMano = 3
         mejorMano = pares[0].concat(pares[1]).concat([noPares[0]])
       }
@@ -124,11 +119,8 @@ class MesaAbstracta {
         //cambiar filter por find
         mejorMano = hayTercia.concat(pares.filter((par) => par.length === 2)[0])
         valorMano = 7
-        cartaKicker = mejorMano[3]
       } else {
-        console.log(pares)
-        mejorMano = pares.slice(0, 2).concat([pares[2][0]])
-        cartaKicker = mejorMano[3]
+        mejorMano = pares[0].concat(pares[1]).concat([pares[2][0]])
         valorMano = 3
       }
     } else {
@@ -136,7 +128,7 @@ class MesaAbstracta {
     }
     //console.log(pares, 'pares')
     //console.log(mejorMano, 'mejor mano de pares')
-    return {mano: MesaAbstracta.unirCartas(mejorMano), valor: valorMano, cartaAlta: mejorMano[0][0], kicker:  cartaKicker}
+    return {mano: MesaAbstracta.unirCartas(mejorMano), valor: valorMano, cartaAlta: mejorMano[0][0], kicker:  undefined}
   }
 
   static checarEscalera(cartas) {
@@ -210,13 +202,19 @@ class MesaAbstracta {
 
   obtenerCartasMesa() {
     let jugadores = this.asientos.filter(asiento => asiento !== undefined)
-    let cartasJugadores = jugadores.reduce((cartas, jugador) => cartas.concat(jugador.mano), [])
+    let cartasJugadores = jugadores.reduce((cartas, jugador) => cartas.concat([jugador.mano]), [])
 
     return [cartasJugadores, this.cartasComunitarias] 
   }
 
   limpiarCartas() {
-    this.asientos = new Array(this.asientos.length).fill(undefined)
+    for ( let asiento=0; asiento < this.asientos.length; asiento++ ) {
+      if ( this.asientos[asiento] !== undefined && this.asientos[asiento].extra === true ) {
+        console.log('limpiando asiento')
+        this.asientos[asiento] = undefined
+      }
+    }
+    console.log(this.asientos)
   }
 
   agregarJugador (jugador) {
@@ -262,7 +260,7 @@ class MesaProbabilidadesHoldem extends MesaAbstracta {
 
   repartirCartas (cartasOcultas, comunitarias) {
     let cartasJugadores
-    if ( cartasOcultas !== undefined && cartasOcultas !== undefined ) {
+    if ( comunitarias !== undefined && cartasOcultas !== undefined ) {
       cartasJugadores = cartasOcultas
       for ( let an=0; an<this.asientos.length; an++ ) {
         if ( this.asientos[an] == undefined ) {
@@ -272,6 +270,8 @@ class MesaProbabilidadesHoldem extends MesaAbstracta {
       this.defCartasComunitarias(comunitarias)
     } else {
       let jugadores = this.asientos.filter(asiento => asiento !== undefined)
+      console.log(this.asientos)
+      console.log(jugadores)
       cartasJugadores = jugadores.reduce((cartas, jugador) => cartas.concat(jugador.mano), [])
       console.log(jugadores)
       console.log(cartasJugadores)
@@ -312,16 +312,14 @@ class MesaProbabilidadesHoldem extends MesaAbstracta {
   }
 
   obtenerMejoresCincoCartas(sieteCartas) {
-    console.log(MesaAbstracta.checarColor(sieteCartas), MesaAbstracta.checarEscalera(sieteCartas), MesaAbstracta.checarPares(sieteCartas))
+    //console.log(MesaAbstracta.checarColor(sieteCartas), MesaAbstracta.checarEscalera(sieteCartas), MesaAbstracta.checarPares(sieteCartas))
     let mejorMano = [MesaAbstracta.checarColor(sieteCartas), MesaAbstracta.checarEscalera(sieteCartas), MesaAbstracta.checarPares(sieteCartas)].find( m => m.mano.length > 4 )
     if ( mejorMano !== undefined ) return mejorMano
-    return {mano: MesaAbstracta.unirCartas(sieteCartas.slice(0, 5)), valor: 1, cartaAlta: undefined, kicker:  undefined}
+    return {mano: MesaAbstracta.unirCartas(sieteCartas.slice(0, 5)), valor: 1, cartaAlta: sieteCartas[0]}
   }
 
   obtenerKicker(manosDiferentes) {
-    return manosDiferentes.reduce( (da, ds) => {
-      return parseInt(da[0].split('-')[0]) > parseInt(ds[0].split('-')[0]) ? da[0] : ds[0] 
-    })
+    return parseInt(manosDiferentes.reduce( (da, ds) => parseInt(da[0].split('-')[0]) >= parseInt(ds[0].split('-')[0]) ? da : ds)[0].split('-'))
   }
 
   obtenerMejorMano(manos) {
@@ -344,13 +342,9 @@ class MesaProbabilidadesHoldem extends MesaAbstracta {
       }
       coincidencias.push(coincidencia)
     }
-    console.log(coincidencias)
-    console.log(coincidencias)
-    console.log(coincidencias)
-    console.log(coincidencias)
+    console.log(coincidencias, 'coincidencias')
 
     if (coincidencias.length === 0) {
-      console.log('puta madre')
       return manos.find(j => j.mejorMano.mano.includes(this.obtenerKicker(manos.map(j => j.mejorMano.mano))) )
     }
 
@@ -361,23 +355,47 @@ class MesaProbabilidadesHoldem extends MesaAbstracta {
       return coincidencia
     })
     igualdad = MesaAbstracta.separarCartas(igualdad).map( c => String(c[0]) )
-    console.log(igualdad)
+    console.log(igualdad, 'igualdad')
 
     let diferencias = manos.map( j => j.mejorMano.mano.filter(c => !igualdad.includes(c.split('-')[0])) )
-    console.log(diferencias)
+    console.log(diferencias, 'diferencias')
 
     if ( diferencias.find( d => d.length === 0 ) ) {
       return manos  
     }
 
+
     let kickerMasAlto = this.obtenerKicker(diferencias)
     console.log(kickerMasAlto)
-    console.log(manos.filter( (j) => j.mejorMano.mano.includes(kickerMasAlto)) )
-    return manos.filter( (j) => j.mejorMano.mano.includes(kickerMasAlto) )
+
+    let kickerManos = diferencias.reduce( (kicker, diferencia) => {
+      console.log(diferencia)
+      if ( kicker.length > 0 ) {
+        diferencias.filter( d => 
+          d.find( cd =>
+            cd.startsWith(String(this.obtenerKicker(diferencias.map( d => d[d.length-1]))))
+          )
+        )
+      }
+      if (  parseInt(diferencia[0].split('-')[0]) === kickerMasAlto ) {
+        
+        return kicker.concat([diferencia[0]])
+      }
+      return kicker
+    }, [])
+    console.log(kickerManos)
+
+    return manos.reduce( (manosSeparadas, jugador)  => {
+      if ( jugador.mejorMano.mano.find( carta => kickerManos.includes(carta) ) !== undefined ) {
+        return manosSeparadas.concat(jugador)
+      }
+      return manosSeparadas
+    }, [])
   }
 
   obtenerGanador() {
     this.ponerMejoresManos()
+    console.log(this.asientos)
     let mayorRangoPos = 0
     for ( let an=1; an < this.asientos.length; an++ ) {
       if ( this.asientos[mayorRangoPos].mejorMano.valor < this.asientos[an].mejorMano.valor ) {
@@ -397,33 +415,18 @@ class MesaProbabilidadesHoldem extends MesaAbstracta {
     }, 0)
     
     let manosFinales = mejoresManos.filter((asiento) => asiento.mejorMano.mano[0].startsWith(String(cartaMasAlta)))
-    console.log(mejoresManos.filter((asiento) => asiento.mejorMano.mano[0].startsWith(String(cartaMasAlta))), 'que putas pasa')
-    let ganador = this.obtenerMejorMano(manosFinales)
+    
+    let ganadores = this.obtenerMejorMano(manosFinales)
+    console.log(ganadores)
 
-    console.log(ganador.map(g => g.asiento))
-    return ganador.map(g => g.asiento)
+    return ganadores.map( ganador => ganador.asiento )
   }
 
-  agregarJugador(jugador, cartas) {
-    super.agregarJugador(jugador).mano = cartas
+  agregarJugador(jugador, cartas, esExtra = true) {
+    let nuevoJugador = super.agregarJugador(jugador)
+    nuevoJugador.mano = cartas
+    nuevoJugador.extra = esExtra 
   }
-}
-
-function calcularProbabilidades(mesa, itr) {
-  let manos = mesa.obtenerMejorMano()
-  let cuenta = 0
-  let encontradas = 0
-  while ( cuenta < itr) {
-    cuenta++
-    //if (manos[2].length > 0 && manos[1].length > 0 */) {
-    if (manos.length > 0 ) {
-      encontradas++
-      //console.log(manos)
-      //manos.forEach((m, i) => console.log(m))
-    } 
-    manos = mesa.obtenerMejorMano()
-  }
-  console.log('Iteraciones: ', cuenta, 'Encontradas: ', encontradas, 'Porcentaje: ', 100/(cuenta/encontradas))
 }
 
 const crearCartasElems = (cartasJugador, vacias) => {
@@ -548,7 +551,7 @@ const agregarJugador = (cartasJugador) => {
   let jugadorObj = new Jugador(parseInt(mesaDatos.jugadorActual.getAttribute('posicion-jugador')))
 
   mesaDatos.jugadorActual = undefined
-  mesaDatos.mesaObj.agregarJugador(jugadorObj, cartas)
+  mesaDatos.mesaObj.agregarJugador(jugadorObj, cartas, false)
 }
 
 const seleccionarJugador = (seleccionarBtn, todasCartas) => {
@@ -558,7 +561,8 @@ const seleccionarJugador = (seleccionarBtn, todasCartas) => {
   mesaDatos.jugadorActual = seleccionarBtn.closest('.jugador-extra')
   mesaDatos.jugadorActual.classList.add('jugador-seleccionado')
 
-  todasCartas.classList.toggle('mostrar-flex')
+  todasCartas.classList.add('mostrar-flex')
+  console.log(mesaDatos.mesaObj.asientos, 'jugador seleccionado')
 }
 
 const crearMesa = (capacidad) => {
@@ -572,7 +576,7 @@ const crearMesa = (capacidad) => {
  
   mesaDatos.mesaElem.replaceChildren(...crearJugadoresExtra(capacidad), cartasComunitariasElem)
 
-  mesaElem.addEventListener('click', (e) => {
+  mesaDatos.mesaElem.addEventListener('click', (e) => {
    if ( e.target.className === 'seleccionar-cartas-btn' ) {
       seleccionarJugador(e.target, todasCartasElem)
     } 
@@ -597,39 +601,69 @@ const crearMesa = (capacidad) => {
 }
 
 const obtenerGanador = () => {
+  console.log(mesaDatos.mesaObj.obtenerGanador())
   for ( let ganador of mesaDatos.mesaObj.obtenerGanador() ) {
+    console.log(ganador)
     if ( mesaDatos.ganadores !== undefined ) mesaDatos.ganadores.forEach(ganador => document.querySelector(`article[class^="jugador"][posicion-jugador="${ganador}"`).classList.remove('ganador'))
+    console.log(document.querySelector(`article[class^="jugador"][posicion-jugador="${ganador}"`))
     document.querySelector(`article[class^="jugador"][posicion-jugador="${ganador}"`).classList.add('ganador')
   }
   mesaDatos.ganadores = mesaDatos.mesaObj.obtenerGanador()
 }
 
-const limpiarCartas = () => {
+const limpiarCartasExtra = () => {
   mesaDatos.mesaObj.limpiarCartas()
-  for ( let jugador of mesaDatos.mesaElem.querySelectorAll('article.jugador-extra]') ) {
-    jugador.classList.remove('jugador')
-    jugador.classList.add('jugador-extra')
-  }
   for ( let cartasJugador of mesaDatos.mesaElem.querySelectorAll('.cartas-jugador') ) {
-    cartasJugador.closest('.jugador-extra').classList.remove('ganador')
-    cartasJugador.replaceChildren(...crearCartasElems(new Array(2).fill(), true))
+    let jugadorExtra = cartasJugador.closest('.jugador-extra')
+    if ( jugadorExtra !== null ) {
+      jugadorExtra.classList.remove('ganador')
+      cartasJugador.replaceChildren(...crearCartasElems(new Array(2).fill(), true))
+    }
   }
 
   mesaDatos.mesaElem.querySelector('#cartas-comunitarias').replaceChildren()
 }
 
-const repartirCartas = () => {
-  mesaDatos.mesaObj.limpiarCartas()
+const repartirCartas = (repeticiones = 1) => {
   //mesa.repartirCartas([['6-C','5-E'], ['11-T','11-D'], ['14-E','13-E'], ['6-D','2-D'], ['2-E','2-T'], ['10-T','13-D'], ['8-D','8-E'], ['5-T','4-E'], ['9-C','2-C']], ['13-D', '3-T', '4-T', '6-E', '7-T'])
-  mesaDatos.mesaObj.repartirCartas()
-  document.querySelector('#cartas-comunitarias').replaceChildren(...crearCartasElems(mesa.cartasComunitarias))
-  mesaDatos.mesaObj.asientos.forEach( a => {
-    let jugadorExtra = document.querySelector(`.jugador-extra[posicion-jugador="${a.asiento}"] > .cartas-jugador`)
-    if ( jugadorExtra !== null ) {
-      jugadorExtra.replaceChildren(...crearCartasElems(a.mano))
+  //mesaDatos.mesaObj.repartirCartas([['9-C', '11-T'], ['8-D', '5-T'], ['5-D', '14-C'], ['14-D', '3-T'], ['4-E', '9-T'], ['13-T', '12-T'], ['6-C', '11-D'], ['10-D', '7-D'], ['6-T', '13-D']], ['6-E', '12-E', '9-D', '4-T', '10-E'])
+  //mesaDatos.mesaObj.repartirCartas([['13-D', '8-T'], ['12-T', '9-E'], ['10-C', '7-C'], ['10-T', '6-T'],['13-C', '3-D'], ['9-C', '7-E'], ['12-C', '2-E'], ['11-C', '6-D'], ['11-E', '3-C']], ['6-E', '13-T', '5-C', '7-D', '2-C'])
+  let ganadasJugadores = {}
+  for ( let r=1; r <= repeticiones; r++ ) {
+    let posicionJugadores = []
+    console.log(mesaDatos.mesaElem.querySelectorAll(`.jugador`))
+    for ( let jugador of mesaDatos.mesaElem.querySelectorAll(`.jugador`) ) {
+      posicionJugadores.push(parseInt(jugador.getAttribute('posicion-jugador')))
+    } 
+    console.log(posicionJugadores)
+    limpiarCartasExtra()
+
+    mesaDatos.mesaObj.repartirCartas()
+    if ( r === repeticiones ) {
+      document.querySelector('#cartas-comunitarias').replaceChildren(...crearCartasElems(mesaDatos.mesaObj.cartasComunitarias))
+      mesaDatos.mesaObj.asientos.forEach( a => {
+        let jugadorExtra = document.querySelector(`.jugador-extra[posicion-jugador="${a.asiento}"] > .cartas-jugador`)
+        if ( jugadorExtra !== null ) {
+          jugadorExtra.replaceChildren(...crearCartasElems(a.mano))
+        }
+      })
     }
-  })
-  obtenerGanador()
+    obtenerGanador()
+
+    for ( let ganador of mesaDatos.ganadores ) {
+      if (posicionJugadores.includes(ganador)) {
+        if ( ganadasJugadores[ganador] === undefined ) {
+          ganadasJugadores[ganador] = 1
+        } else {
+          ganadasJugadores[posicionJugadores] += 1
+        }
+      }
+    }
+    console.log(ganadasJugadores)
+    console.log(Object.values(ganadasJugadores).map( ganadas => 100/(repeticiones / ganadas) ))
+
+  }
+  console.log(mesaDatos.mesaObj.obtenerCartasMesa(), 'cartas de la mesa')
 }
 
 
@@ -643,6 +677,7 @@ const iniciarMesa = () => {
       let capacidad = parseInt(mesaOpcionesElem.querySelector('#mesa-capacidad').value)
       mesaDatos.mesaObj = new MesaProbabilidadesHoldem(capacidad, CARTAS)
       crearMesa(capacidad)
+      document.querySelector('#todas-cartas').classList.add('mostrar-flex')
     } else if (e.target.classList.contains('control-capacidad-btn')) {
       let capacidadActual = parseInt(mesaCapacidadElem.value)
       if ( mesaCapacidadElem.value === '' )  mesaCapacidadElem.value = 2
@@ -653,9 +688,10 @@ const iniciarMesa = () => {
         mesaCapacidadElem.value = (parseInt(mesaCapacidadElem.value)-1).toString()
       }
     } else if ( e.target.id === 'repartir-cartas-btn' ) {
-      repartirCartas()
-    } else if ( e.target.id === 'limpiar-cartas-btn' ) {
-      limpiarCartas()
+      document.querySelector('#todas-cartas').classList.remove('mostrar-flex')
+      repartirCartas(1000)
+    } else if ( e.target.id === 'limpiar-cartas-extra-btn' ) {
+      limpiarCartasExtra()
     }
   })
 }

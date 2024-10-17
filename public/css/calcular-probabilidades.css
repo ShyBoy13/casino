@@ -95,7 +95,6 @@
 
 #todas-cartas {
   display: none;
-  display: flex;
   flex-wrap: wrap;
 }
 
