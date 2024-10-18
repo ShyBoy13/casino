@@ -214,7 +214,6 @@ class MesaAbstracta {
         this.asientos[asiento] = undefined
       }
     }
-    console.log(this.asientos)
   }
 
   agregarJugador (jugador) {
@@ -415,7 +414,6 @@ class MesaProbabilidadesHoldem extends MesaAbstracta {
     let manosFinales = mejoresManos.filter((asiento) => asiento.mejorMano.mano[0].startsWith(String(cartaMasAlta)))
     
     let ganadores = this.obtenerMejorMano(manosFinales)
-    console.log(ganadores)
 
     return ganadores.map( ganador => ganador.asiento )
   }
@@ -427,11 +425,9 @@ class MesaProbabilidadesHoldem extends MesaAbstracta {
   }
 }
 
-const crearCartasElems = (cartasJugador, vacias) => {
-  let cartas = cartasJugador 
-  if ( vacias !== true ) {
-    cartas = MesaAbstracta.separarCartas(cartasJugador)
-  }
+const stringACartaTexto = (cartaString) => {
+  let carta = cartaString.split('-')
+  let textoCarta
 
   let letras = {
     14: 'A',
@@ -446,36 +442,77 @@ const crearCartasElems = (cartasJugador, vacias) => {
     C: '♥',
     D: '♦',
   }
+ 
+  if ( ['14', '13', '12', '11'].includes(carta[0]) ) {
+    textoCarta = letras[carta[0]]
+  } else {
+    textoCarta = carta[0]
+  }
+  return textoCarta.concat(figuras[carta[1]])
+}
+
+const vaciarCartasElems = (cartasElems) => {
+  for ( let cartaElem of cartasElems ) {
+    cartaElem.firstElementChild.textContent = ''
+    cartaElem.removeAttribute('style')
+  }
+}
+
+const rellenarCartasElems = (cartasElems, cartasString) => {
+  let ci = 0
+  for ( let cartaElem of cartasElems ) {
+    if ( ci < cartasString.length ) {
+      cartaElem.firstElementChild.textContent = stringACartaTexto(cartasString[ci])
+      if ( ['C', 'D'].includes(cartasString[ci].charAt(cartasString[ci].length-1)) ) {
+        cartaElem.style.color = '#ff0000'
+      }
+      ci++
+    } else {
+      break
+    }
+
+  }
+}
+
+const crearCartasElems = (cartasJugador) => {
+  let cartas, completas, letras, figuras
+  if ( typeof cartasJugador === 'number') {
+    completas = false
+    cartas = new Array(cartasJugador).fill()
+  } else {
+    cartas = cartasJugador
+    completas = true
+
+    letras = {
+      14: 'A',
+      13: 'K',
+      12: 'Q',
+      11: 'J',
+    }
+    figuras = {
+      E: '♠',
+      T: '♣',
+      C: '♥',
+      D: '♦',
+    }
+  }
   
   let cartasArr = cartas.map(carta => {
     let cartaElem = document.createElement('div')
     cartaElem.className = 'carta'
 
-    let valor = document.createElement('span')
-    let figura = document.createElement('span')
+    let cartaTexto = document.createElement('span')
+    cartaTexto.className = 'carta-texto'
 
-    if ( vacias !== true ) {
-      if ( [14, 13, 12, 11].includes(carta[0]) ) {
-        valor.textContent = letras[carta[0]]
-      } else {
-        valor.textContent = carta[0]
-      }
-
-      if ( ['C', 'D'].includes(carta[1]) ) {
-        figura.style.color = '#ff0000'
-        valor.style.color = '#ff0000'
-      }
-      figura.textContent = figuras[carta[1]]
-
-
-    }
-
-    cartaElem.appendChild(valor)
-    cartaElem.appendChild(figura)
-
+    cartaElem.appendChild(cartaTexto)
+    
     return cartaElem
   })
-  
+
+  if ( completas ) {
+    rellenarCartasElems(cartasArr, cartas)
+  }
+
   return cartasArr
 }
 
@@ -523,16 +560,80 @@ const crearJugadoresExtra = (cantidad) => {
     let cartasJugador = document.createElement('div')
     cartasJugador.className = 'cartas-jugador'
 
-    let seleccionarCartasBtn = document.createElement('button')
-    seleccionarCartasBtn.className = 'seleccionar-cartas-btn'
-    seleccionarCartasBtn.textContent = '+'
 
-    cartasJugador.append(...crearCartasElems(new Array(2).fill(), true))
+    cartasJugador.append(...crearCartasElems(2))
     jugador.appendChild(cartasJugador)
-    jugador.appendChild(seleccionarCartasBtn)
     jugadores.push(jugador)
   }
   return jugadores 
+}
+
+const obtenerGanador = (actualizarGanador = true) => {
+  console.log(mesaDatos.mesaObj.obtenerGanador())
+  if ( actualizarGanador ) {
+    for ( let ganador of mesaDatos.mesaObj.obtenerGanador() ) {
+      if ( mesaDatos.ganadores !== undefined ) mesaDatos.ganadores.forEach(ganador => document.querySelector(`article[class^="jugador"][posicion-jugador="${ganador}"`).classList.remove('ganador'))
+      document.querySelector(`article[class^="jugador"][posicion-jugador="${ganador}"`).classList.add('ganador')
+    }
+  }
+  mesaDatos.ganadores = mesaDatos.mesaObj.obtenerGanador()
+}
+
+const limpiarCartasExtra = () => {
+  mesaDatos.mesaObj.limpiarCartas()
+  for ( let cartasJugador of mesaDatos.mesaElem.querySelectorAll('.cartas-jugador') ) {
+    let jugadorExtra = cartasJugador.closest('.jugador-extra')
+    if ( jugadorExtra !== null ) {
+      jugadorExtra.classList.remove('ganador')
+      vaciarCartasElems(cartasJugador.children)
+    }
+  }
+
+  vaciarCartasElems(mesaDatos.mesaElem.querySelector('#cartas-comunitarias').children)
+}
+
+
+
+const repartirCartas = (repeticiones = 1, etapaMesa) => {
+  //mesa.repartirCartas([['6-C','5-E'], ['11-T','11-D'], ['14-E','13-E'], ['6-D','2-D'], ['2-E','2-T'], ['10-T','13-D'], ['8-D','8-E'], ['5-T','4-E'], ['9-C','2-C']], ['13-D', '3-T', '4-T', '6-E', '7-T'])
+  //mesaDatos.mesaObj.repartirCartas([['9-C', '11-T'], ['8-D', '5-T'], ['5-D', '14-C'], ['14-D', '3-T'], ['4-E', '9-T'], ['13-T', '12-T'], ['6-C', '11-D'], ['10-D', '7-D'], ['6-T', '13-D']], ['6-E', '12-E', '9-D', '4-T', '10-E'])
+  //mesaDatos.mesaObj.repartirCartas([['13-D', '8-T'], ['12-T', '9-E'], ['10-C', '7-C'], ['10-T', '6-T'],['13-C', '3-D'], ['9-C', '7-E'], ['12-C', '2-E'], ['11-C', '6-D'], ['11-E', '3-C']], ['6-E', '13-T', '5-C', '7-D', '2-C'])
+  let ganadasJugadores = {}
+  let mostrarGanador = false
+  for ( let r=1; r <= repeticiones; r++ ) {
+    let posicionJugadores = []
+    for ( let jugador of mesaDatos.mesaElem.querySelectorAll(`.jugador`) ) {
+      posicionJugadores.push(parseInt(jugador.getAttribute('posicion-jugador')))
+    } 
+    limpiarCartasExtra()
+
+    mesaDatos.mesaObj.repartirCartas(etapaMesa)
+    if ( r === 1 ) console.log(mesaDatos.mesaObj.obtenerCartasMesa(), 'cartas de la mesa')
+    if ( r === repeticiones ) {
+      rellenarCartasElems(document.querySelectorAll('#cartas-comunitarias > .carta'), mesaDatos.mesaObj.cartasComunitarias)
+      mesaDatos.mesaObj.asientos.forEach( a => {
+        let jugadorExtra = document.querySelector(`.jugador-extra[posicion-jugador="${a.asiento}"] > .cartas-jugador`)
+        if ( jugadorExtra !== null ) {
+          rellenarCartasElems(jugadorExtra.children, a.mano)
+        }
+      })
+    mostrarGanador = true
+    }
+    obtenerGanador(mostrarGanador)
+
+    for ( let ganador of mesaDatos.ganadores ) {
+      if (posicionJugadores.includes(ganador)) {
+        if ( ganadasJugadores[ganador] === undefined ) {
+          ganadasJugadores[ganador] = 1
+        } else {
+          ganadasJugadores[posicionJugadores] += 1
+        }
+      }
+    }
+    console.log(ganadasJugadores)
+    console.log(Object.values(ganadasJugadores).map( ganadas => 100/(repeticiones / ganadas) ))
+
+  }
 }
 
 const agregarJugador = (cartasJugador) => {
@@ -541,7 +642,6 @@ const agregarJugador = (cartasJugador) => {
   mesaDatos.jugadorActual.classList.remove('jugador-seleccionado')
   mesaDatos.jugadorActual.classList.remove('jugador-extra')
   mesaDatos.jugadorActual.classList.add('jugador')
-  mesaDatos.jugadorActual.querySelector('.seleccionar-cartas-btn').style.display = 'none'
   
   jugadorCartasElem.replaceChildren(...crearCartasElems(cartasJugador))
 
@@ -552,15 +652,14 @@ const agregarJugador = (cartasJugador) => {
   mesaDatos.mesaObj.agregarJugador(jugadorObj, cartas, false)
 }
 
-const seleccionarJugador = (seleccionarBtn, todasCartas) => {
+const seleccionarJugador = (jugador, todasCartas) => {
   if ( mesaDatos.jugadorActual !== undefined ) {
     mesaDatos.jugadorActual.classList.remove('jugador-seleccionado')
   }
-  mesaDatos.jugadorActual = seleccionarBtn.closest('.jugador-extra')
+  mesaDatos.jugadorActual = jugador
   mesaDatos.jugadorActual.classList.add('jugador-seleccionado')
 
   todasCartas.classList.add('mostrar-flex')
-  console.log(mesaDatos.mesaObj.asientos, 'jugador seleccionado')
 }
 
 const crearMesa = (capacidad) => {
@@ -569,14 +668,17 @@ const crearMesa = (capacidad) => {
   const todasCartasElem = document.querySelector('#todas-cartas')
   const cartasComunitariasElem = document.createElement('article')
   cartasComunitariasElem.id = 'cartas-comunitarias'
+  cartasComunitariasElem.append(...crearCartasElems(5))
 
   let cartasJugador = []
  
   mesaDatos.mesaElem.replaceChildren(...crearJugadoresExtra(capacidad), cartasComunitariasElem)
 
   mesaDatos.mesaElem.addEventListener('click', (e) => {
-   if ( e.target.className === 'seleccionar-cartas-btn' ) {
-      seleccionarJugador(e.target, todasCartasElem)
+    let jugadorSeleccionado = e.target.closest('.jugador-extra')
+    if ( jugadorSeleccionado !== null ) {
+      console.log(jugadorSeleccionado, 'seleccionado')
+      seleccionarJugador(jugadorSeleccionado, todasCartasElem)
     } 
   })
 
@@ -598,73 +700,6 @@ const crearMesa = (capacidad) => {
   crearCartasElems(CARTAS).forEach(cartaElem => todasCartasElem.appendChild(cartaElem))
 }
 
-const obtenerGanador = () => {
-  console.log(mesaDatos.mesaObj.obtenerGanador())
-  for ( let ganador of mesaDatos.mesaObj.obtenerGanador() ) {
-    console.log(ganador)
-    if ( mesaDatos.ganadores !== undefined ) mesaDatos.ganadores.forEach(ganador => document.querySelector(`article[class^="jugador"][posicion-jugador="${ganador}"`).classList.remove('ganador'))
-    console.log(document.querySelector(`article[class^="jugador"][posicion-jugador="${ganador}"`))
-    document.querySelector(`article[class^="jugador"][posicion-jugador="${ganador}"`).classList.add('ganador')
-  }
-  mesaDatos.ganadores = mesaDatos.mesaObj.obtenerGanador()
-}
-
-const limpiarCartasExtra = () => {
-  mesaDatos.mesaObj.limpiarCartas()
-  for ( let cartasJugador of mesaDatos.mesaElem.querySelectorAll('.cartas-jugador') ) {
-    let jugadorExtra = cartasJugador.closest('.jugador-extra')
-    if ( jugadorExtra !== null ) {
-      jugadorExtra.classList.remove('ganador')
-      cartasJugador.replaceChildren(...crearCartasElems(new Array(2).fill(), true))
-    }
-  }
-
-  mesaDatos.mesaElem.querySelector('#cartas-comunitarias').replaceChildren()
-}
-
-const repartirCartas = (repeticiones = 1, etapaMesa) => {
-  //mesa.repartirCartas([['6-C','5-E'], ['11-T','11-D'], ['14-E','13-E'], ['6-D','2-D'], ['2-E','2-T'], ['10-T','13-D'], ['8-D','8-E'], ['5-T','4-E'], ['9-C','2-C']], ['13-D', '3-T', '4-T', '6-E', '7-T'])
-  //mesaDatos.mesaObj.repartirCartas([['9-C', '11-T'], ['8-D', '5-T'], ['5-D', '14-C'], ['14-D', '3-T'], ['4-E', '9-T'], ['13-T', '12-T'], ['6-C', '11-D'], ['10-D', '7-D'], ['6-T', '13-D']], ['6-E', '12-E', '9-D', '4-T', '10-E'])
-  //mesaDatos.mesaObj.repartirCartas([['13-D', '8-T'], ['12-T', '9-E'], ['10-C', '7-C'], ['10-T', '6-T'],['13-C', '3-D'], ['9-C', '7-E'], ['12-C', '2-E'], ['11-C', '6-D'], ['11-E', '3-C']], ['6-E', '13-T', '5-C', '7-D', '2-C'])
-  let ganadasJugadores = {}
-  for ( let r=1; r <= repeticiones; r++ ) {
-    let posicionJugadores = []
-    console.log(mesaDatos.mesaElem.querySelectorAll(`.jugador`))
-    for ( let jugador of mesaDatos.mesaElem.querySelectorAll(`.jugador`) ) {
-      posicionJugadores.push(parseInt(jugador.getAttribute('posicion-jugador')))
-    } 
-    console.log(posicionJugadores)
-    limpiarCartasExtra()
-
-    mesaDatos.mesaObj.repartirCartas(etapaMesa)
-    if ( r === 1 ) console.log(mesaDatos.mesaObj.obtenerCartasMesa(), 'cartas de la mesa')
-    if ( r === repeticiones ) {
-      document.querySelector('#cartas-comunitarias').replaceChildren(...crearCartasElems(mesaDatos.mesaObj.cartasComunitarias))
-      mesaDatos.mesaObj.asientos.forEach( a => {
-        let jugadorExtra = document.querySelector(`.jugador-extra[posicion-jugador="${a.asiento}"] > .cartas-jugador`)
-        if ( jugadorExtra !== null ) {
-          jugadorExtra.replaceChildren(...crearCartasElems(a.mano))
-        }
-      })
-    }
-    obtenerGanador()
-
-    for ( let ganador of mesaDatos.ganadores ) {
-      if (posicionJugadores.includes(ganador)) {
-        if ( ganadasJugadores[ganador] === undefined ) {
-          ganadasJugadores[ganador] = 1
-        } else {
-          ganadasJugadores[posicionJugadores] += 1
-        }
-      }
-    }
-    console.log(ganadasJugadores)
-    console.log(Object.values(ganadasJugadores).map( ganadas => 100/(repeticiones / ganadas) ))
-
-  }
-}
-
-
 const iniciarMesa = () => {
   let mesaOpcionesElem = document.querySelector('#mesa-opciones')
   mesaDatos.mesaElem = document.querySelector('#mesa')
@@ -674,7 +709,7 @@ const iniciarMesa = () => {
     if ( e.target.id === 'crear-mesa-btn' && mesaCapacidadElem.value !== '') {
       let capacidad = parseInt(mesaOpcionesElem.querySelector('#mesa-capacidad').value)
       mesaDatos.mesaObj = new MesaProbabilidadesHoldem(capacidad, CARTAS)
-      mesaDatos.ganadores = []
+      mesaDatos.ganadores = undefined
       crearMesa(capacidad)
       document.querySelector('#todas-cartas').classList.add('mostrar-flex')
 
@@ -689,7 +724,7 @@ const iniciarMesa = () => {
 
     } else if ( e.target.id === 'repartir-cartas-btn' ) {
       document.querySelector('#todas-cartas').classList.remove('mostrar-flex')
-      repartirCartas(100, parseInt(mesaOpcionesElem.querySelector('#etapa-mesa').value))
+      repartirCartas(5000, parseInt(mesaOpcionesElem.querySelector('#etapa-mesa').value))
 
     } else if ( e.target.id === 'limpiar-cartas-extra-btn' ) {
       limpiarCartasExtra()
